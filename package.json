@@ -10,13 +10,14 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@tanstack/router-devtools": "^1.39.4",
         "@tanstack/react-query": "^5.45.1",
         "@tanstack/react-router": "^1.38.1",
         "react": "^18.2.0",
-        "react-dom": "^18.2.0"
+        "react-dom": "^18.2.0",
+        "zod": "^3.23.8"
     },
     "devDependencies": {
-        "@tanstack/router-devtools": "^1.38.1",
         "@tanstack/router-vite-plugin": "^1.39.1",
         "@types/react": "^18.2.66",
         "@types/react-dom": "^18.2.22",
