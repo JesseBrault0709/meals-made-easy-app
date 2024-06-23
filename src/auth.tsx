@@ -1,70 +1,50 @@
-import React, { useContext, createContext, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 
 export interface AuthContextType {
     token: string | null
-    error: string | null
-    login(username: string, password: string): Promise<boolean>
-    logout(): void
+    putToken(token: string, cb?: () => void): void
+    clearToken(cb?: () => void): void
 }
 
-interface LoginView {
-    username: string
-    accessToken: string
+interface AuthState {
+    token: string | null
+    putCb?: () => void
+    clearCb?: () => void
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
 export const AuthProvider = ({ children }: React.PropsWithChildren) => {
-    const [token, setToken] = useState<string | null>(null)
-    const [error, setError] = useState<string | null>(null)
+    const [authState, setAuthState] = useState<AuthState>({ token: null })
 
-    const login: AuthContextType['login'] = async (username, password) => {
-        try {
-            const response = await fetch(
-                import.meta.env.VITE_MME_API_URL + '/auth/login',
-                {
-                    body: JSON.stringify({ username, password }),
-                    headers: {
-                        'Content-type': 'application/json'
-                    },
-                    method: 'POST',
-                    mode: 'cors'
-                }
-            )
-            if (response.ok) {
-                const body = (await response.json()) as LoginView
-                setToken(body.accessToken)
-                setError(null)
-                return true
-            } else {
-                setToken(null)
-                if (response.status === 401) {
-                    setError('Invalid username or password.')
-                } else if (response.status === 500) {
-                    setError(
-                        'There was an internal server error. Please try again later.'
-                    )
-                } else {
-                    setError('Unknown error.')
-                    console.error(
-                        `Unknown error: ${response.status} ${response.statusText}`
-                    )
-                }
-                return false
-            }
-        } catch (fetchError) {
-            setError('Network error. Please try again later.')
-            console.error(`Unknown error: ${fetchError}`)
-            return false
+    useEffect(() => {
+        if (authState.token === null && authState.clearCb !== undefined) {
+            authState.clearCb()
+            setAuthState({ ...authState, clearCb: undefined })
+        } else if (authState.token !== null && authState.putCb !== undefined) {
+            authState.putCb()
+            setAuthState({ ...authState, putCb: undefined })
         }
-    }
-
-    const logout: AuthContextType['logout'] = () => {
-        setToken(null)
-    }
+    }, [authState.token])
 
     return (
-        <AuthContext.Provider value={{ token, error, login, logout }}>
+        <AuthContext.Provider
+            value={{
+                token: authState.token,
+                putToken(token, cb) {
+                    setAuthState({
+                        token,
+                        putCb: cb
+                    })
+                },
+                clearToken(cb) {
+                    setAuthState({
+                        token: null,
+                        clearCb: cb
+                    })
+                }
+            }}
+        >
             {children}
         </AuthContext.Provider>
     )

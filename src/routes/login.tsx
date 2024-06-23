@@ -1,17 +1,21 @@
 import {
     createFileRoute,
     redirect,
-    useRouteContext,
+    useNavigate,
     useRouter,
     useSearch
 } from '@tanstack/react-router'
-import { FormEvent } from 'react'
+import { FormEvent, useState } from 'react'
 import { z } from 'zod'
+import login from '../api/login'
+import { useAuth } from '../auth'
 
 const Login = () => {
-    const login = useRouteContext({ from: '/login', select: s => s.auth.login })
-    const error = useRouteContext({ from: '/login', select: s => s.auth.error })
+    const auth = useAuth()
+    const [error, setError] = useState<string | null>(null)
+
     const router = useRouter()
+    const navigate = useNavigate()
     const search = useSearch({ from: '/login' })
 
     const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -19,10 +23,14 @@ const Login = () => {
         const formData = new FormData(event.currentTarget)
         const username = (formData.get('username') as string | null) ?? ''
         const password = (formData.get('password') as string | null) ?? ''
-        const success = await login(username, password)
-        if (success) {
-            await router.invalidate()
-            router.navigate({ to: search.redirect || '/' })
+        const loginResult = await login(username, password)
+        if (loginResult._tag === 'success') {
+            auth.putToken(loginResult.loginView.accessToken, async () => {
+                await router.invalidate()
+                await navigate({ to: search.redirect ?? '/' })
+            })
+        } else {
+            setError(loginResult.error)
         }
     }
 

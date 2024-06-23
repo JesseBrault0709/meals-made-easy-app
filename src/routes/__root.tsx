@@ -1,23 +1,23 @@
 import {
     Outlet,
     createRootRouteWithContext,
-    useRouteContext,
+    useNavigate,
     useRouter
 } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 import RouterContext from '../RouterContext'
+import { useAuth } from '../auth'
 
 const RootLayout = () => {
-    const logout = useRouteContext({
-        from: '__root__',
-        select: s => s.auth.logout
-    })
+    const auth = useAuth()
     const router = useRouter()
+    const navigate = useNavigate()
 
     const onLogout = async () => {
-        logout()
-        await router.invalidate()
-        router.navigate({ to: '/login' })
+        auth.clearToken(async () => {
+            await router.invalidate()
+            await navigate({ to: '/login' })
+        })
     }
 
     return (
