@@ -10,7 +10,6 @@ interface ImageView {
     caption: string | null
     owner: UserInfoView
     isPublic: boolean
-    viewers: UserInfoView[]
 }
 
 export default ImageView
