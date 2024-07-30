@@ -17,27 +17,26 @@ const RecipeCard = ({
 }: RecipeCardProps) => {
     return (
         <article>
-            {mainImageUrl ? <img src={mainImageUrl} /> : null}
+            <img src={mainImageUrl} />
             <div className="title-star-count-container">
                 <h1>{title}</h1>
-                {starCount ? (
-                    <span>
-                        <FontAwesomeIcon icon="star" size="sm" />
-                        {starCount}
-                    </span>
-                ) : null}
+                <span>
+                    <FontAwesomeIcon icon="star" size="sm" />
+                    {starCount}
+                </span>
             </div>
             <div className="owner-container">
-                {ownerUsername ? <p>{ownerUsername}</p> : null}
+                <span>
+                    <FontAwesomeIcon icon="user" />
+                    {ownerUsername}
+                </span>
             </div>
             <div className="is-public-container">
-                {isPublic !== undefined ? (
-                    isPublic ? (
-                        <FontAwesomeIcon icon="globe" size="sm" />
-                    ) : (
-                        <FontAwesomeIcon icon="lock" size="sm" />
-                    )
-                ) : null}
+                {isPublic ? (
+                    <FontAwesomeIcon icon="globe" size="sm" />
+                ) : (
+                    <FontAwesomeIcon icon="lock" size="sm" />
+                )}
             </div>
         </article>
     )
