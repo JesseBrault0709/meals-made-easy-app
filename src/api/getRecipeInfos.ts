@@ -1,20 +1,5 @@
 import { ApiError } from './ApiError'
-
-export interface RecipeInfoView {
-    id: number
-    updated: Date
-    title: string
-    ownerId: number
-    ownerUsername: string
-    isPublic: boolean
-    starCount: number
-}
-
-export interface RecipeInfosView {
-    pageNumber: number
-    pageSize: number
-    content: RecipeInfoView[]
-}
+import { RecipeInfosView } from './types/RecipeInfosView'
 
 const getRecipeInfos = async (
     token: string | null,

@@ -33,7 +33,8 @@ const Recipes = () => {
             <RecipeCard
                 key={view.id}
                 title={view.title}
-                owner={view.ownerUsername}
+                ownerUsername={view.ownerUsername}
+                mainImageUrl={view.mainImage.url}
                 starCount={view.starCount}
                 isPublic={view.isPublic}
             />

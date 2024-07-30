@@ -1,34 +1,41 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+
 export interface RecipeCardProps {
     title: string
-    owner?: string
-    imgUrl?: string
-    starCount?: number
-    isPublic?: boolean
+    ownerUsername: string
+    mainImageUrl: string
+    starCount: number
+    isPublic: boolean
 }
 
 const RecipeCard = ({
     title,
-    owner,
-    imgUrl,
+    ownerUsername,
+    mainImageUrl,
     starCount,
     isPublic
 }: RecipeCardProps) => {
     return (
         <article>
-            {imgUrl ? <img src={imgUrl} /> : null}
-            <div className="title-rating-container">
+            {mainImageUrl ? <img src={mainImageUrl} /> : null}
+            <div className="title-star-count-container">
                 <h1>{title}</h1>
-                {starCount ? <span>{starCount}</span> : null}
+                {starCount ? (
+                    <span>
+                        <FontAwesomeIcon icon="star" size="sm" />
+                        {starCount}
+                    </span>
+                ) : null}
             </div>
             <div className="owner-container">
-                {owner ? <p>@{owner}</p> : null}
+                {ownerUsername ? <p>{ownerUsername}</p> : null}
             </div>
             <div className="is-public-container">
                 {isPublic !== undefined ? (
                     isPublic ? (
-                        <p>public</p>
+                        <FontAwesomeIcon icon="globe" size="sm" />
                     ) : (
-                        <p>not public</p>
+                        <FontAwesomeIcon icon="lock" size="sm" />
                     )
                 ) : null}
             </div>
