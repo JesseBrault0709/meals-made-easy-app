@@ -12,7 +12,7 @@ export const Route = createFileRoute('/recipes/$username/$slug')({
             queryKey: ['recipe', params.username, params.slug],
             queryFn: () =>
                 getRecipe({
-                    abortController,
+                    abortSignal: abortController.signal,
                     token: context.auth.token,
                     username: params.username,
                     slug: params.slug

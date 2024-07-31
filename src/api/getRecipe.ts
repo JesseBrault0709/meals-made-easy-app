@@ -7,21 +7,23 @@ export interface GetRecipeDeps {
     token: string | null
     username: string
     slug: string
-    abortController: AbortController
+    abortSignal: AbortSignal
 }
 
-const getRecipe = async (
-    token: string | null,
-    ownerUsername: string,
-    slug: string
-): Promise<FullRecipeView> => {
+const getRecipe = async ({
+    token,
+    username,
+    slug,
+    abortSignal
+}: GetRecipeDeps): Promise<FullRecipeView> => {
     const headers = new Headers()
     if (token !== null) {
         headers.set('Authorization', `Bearer ${token}`)
     }
     const response = await fetch(
-        import.meta.env.VITE_MME_API_URL + `/recipes/${ownerUsername}/${slug}`,
+        import.meta.env.VITE_MME_API_URL + `/recipes/${username}/${slug}`,
         {
+            signal: abortSignal,
             headers,
             mode: 'cors'
         }

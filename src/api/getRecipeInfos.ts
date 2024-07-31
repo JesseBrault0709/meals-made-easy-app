@@ -2,11 +2,19 @@ import { ApiError } from './ApiError'
 import { toImageView } from './types/ImageView'
 import RecipeInfosView, { RawRecipeInfosView } from './types/RecipeInfosView'
 
-const getRecipeInfos = async (
-    token: string | null,
-    pageNumber: number,
+export interface GetRecipeInfosDeps {
+    abortSignal: AbortSignal
+    token: string | null
+    pageNumber: number
     pageSize: number
-): Promise<RecipeInfosView> => {
+}
+
+const getRecipeInfos = async ({
+    abortSignal,
+    token,
+    pageNumber,
+    pageSize
+}: GetRecipeInfosDeps): Promise<RecipeInfosView> => {
     const headers = new Headers()
     if (token !== null) {
         headers.set('Authorization', `Bearer ${token}`)
@@ -15,6 +23,7 @@ const getRecipeInfos = async (
         import.meta.env.VITE_MME_API_URL +
             `/recipes?page=${pageNumber}&size=${pageSize}`,
         {
+            signal: abortSignal,
             headers,
             mode: 'cors'
         }

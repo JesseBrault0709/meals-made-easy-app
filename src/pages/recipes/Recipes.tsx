@@ -13,7 +13,13 @@ const Recipes = () => {
 
     const { data, isPending, error } = useQuery({
         queryKey: ['recipeInfos'],
-        queryFn: () => getRecipeInfos(token, pageNumber, pageSize)
+        queryFn: ({ signal }) =>
+            getRecipeInfos({
+                abortSignal: signal,
+                pageNumber,
+                pageSize,
+                token
+            })
     })
 
     if (isPending) {
