@@ -1,3 +1,4 @@
+import { notFound } from '@tanstack/react-router'
 import { ApiError } from './ApiError'
 import FullRecipeView, { RawFullRecipeView } from './types/FullRecipeView'
 import { toImageView } from './types/ImageView'
@@ -45,6 +46,8 @@ const getRecipe = async (
             viewerCount,
             mainImage: toImageView(rawMainImage)
         }
+    } else if (response.status === 404) {
+        throw notFound()
     } else {
         throw new ApiError(response.status, response.statusText)
     }
