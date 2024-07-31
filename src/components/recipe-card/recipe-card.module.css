@@ -1,0 +1,18 @@
+.recipe-card {
+    max-width: 400px;
+    border: 1px solid black;
+}
+
+.recipe-image {
+    max-width: 100%;
+}
+
+.info-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: baseline;
+}
+
+.title {
+    margin-block: 0;
+}
