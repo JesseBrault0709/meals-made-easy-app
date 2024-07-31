@@ -38,7 +38,15 @@ const RecipeCard = ({
                 />
             </Link>
             <div className={classes.infoContainer}>
-                <h1 className={classes.title}>{title}</h1>
+                <Link
+                    to="/recipes/$username/$slug"
+                    params={{
+                        username: ownerUsername,
+                        slug
+                    }}
+                >
+                    <h1 className={classes.title}>{title}</h1>
+                </Link>
                 <span>
                     <FontAwesomeIcon icon="star" size="sm" />
                     {starCount}
