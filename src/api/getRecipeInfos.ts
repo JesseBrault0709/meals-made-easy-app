@@ -1,5 +1,5 @@
 import { ApiError } from './ApiError'
-import { RecipeInfosView } from './types/RecipeInfosView'
+import RecipeInfosView, { RawRecipeInfosView } from './types/RecipeInfosView'
 
 const getRecipeInfos = async (
     token: string | null,
@@ -19,7 +19,45 @@ const getRecipeInfos = async (
         }
     )
     if (response.ok) {
-        return (await response.json()) as RecipeInfosView
+        const { pageNumber, pageSize, content } =
+            (await response.json()) as RawRecipeInfosView
+        return {
+            pageNumber,
+            pageSize,
+            content: content.map(
+                ({
+                    id,
+                    updated: rawUpdated,
+                    title,
+                    ownerId,
+                    ownerUsername,
+                    isPublic,
+                    starCount,
+                    mainImage: rawMainImage
+                }) => ({
+                    id,
+                    updated: new Date(rawUpdated),
+                    title,
+                    ownerId,
+                    ownerUsername,
+                    isPublic,
+                    starCount,
+                    mainImage: {
+                        url: rawMainImage.url,
+                        created: new Date(rawMainImage.created),
+                        modified: rawMainImage.modified
+                            ? new Date(rawMainImage.modified)
+                            : null,
+                        filename: rawMainImage.fileName,
+                        mimeType: rawMainImage.mimeType,
+                        alt: rawMainImage.alt,
+                        caption: rawMainImage.caption,
+                        owner: rawMainImage.owner,
+                        isPublic: rawMainImage.isPublic
+                    }
+                })
+            )
+        }
     } else {
         throw new ApiError(response.status, response.statusText)
     }
