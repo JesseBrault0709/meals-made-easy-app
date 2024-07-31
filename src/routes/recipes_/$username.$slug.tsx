@@ -1,8 +1,10 @@
 import {
     createFileRoute,
+    ErrorComponent,
     useLoaderData,
     useParams
 } from '@tanstack/react-router'
+import { ApiError } from '../../api/ApiError'
 import getRecipe from '../../api/getRecipe'
 import Recipe from '../../pages/recipe/Recipe'
 
@@ -23,6 +25,16 @@ export const Route = createFileRoute('/recipes/$username/$slug')({
             from: '/recipes/$username/$slug'
         })
         return <Recipe {...{ recipe }} />
+    },
+    errorComponent({ error }) {
+        if (error instanceof ApiError) {
+            return (
+                <p>
+                    {error.status}: {error.message}
+                </p>
+            )
+        }
+        return <ErrorComponent error={error} />
     },
     notFoundComponent() {
         const { username, slug } = useParams({
