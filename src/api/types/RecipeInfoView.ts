@@ -9,6 +9,7 @@ export interface RawRecipeInfoView {
     isPublic: boolean
     starCount: number
     mainImage: RawImageView
+    slug: string
 }
 
 interface RecipeInfoView {
@@ -20,6 +21,7 @@ interface RecipeInfoView {
     isPublic: boolean
     starCount: number
     mainImage: ImageView
+    slug: string
 }
 
 export default RecipeInfoView

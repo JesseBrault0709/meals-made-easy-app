@@ -34,6 +34,7 @@ const Recipes = () => {
                 key={view.id}
                 title={view.title}
                 ownerUsername={view.ownerUsername}
+                slug={view.slug}
                 mainImageUrl={view.mainImage.url}
                 mainImageAlt={
                     view.mainImage.alt ? view.mainImage.alt : undefined

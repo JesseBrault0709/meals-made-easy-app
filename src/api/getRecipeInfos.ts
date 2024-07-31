@@ -33,7 +33,8 @@ const getRecipeInfos = async (
                     ownerUsername,
                     isPublic,
                     starCount,
-                    mainImage: rawMainImage
+                    mainImage: rawMainImage,
+                    slug
                 }) => ({
                     id,
                     updated: new Date(rawUpdated),
@@ -54,7 +55,8 @@ const getRecipeInfos = async (
                         caption: rawMainImage.caption,
                         owner: rawMainImage.owner,
                         isPublic: rawMainImage.isPublic
-                    }
+                    },
+                    slug
                 })
             )
         }
