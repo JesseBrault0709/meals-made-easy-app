@@ -1,4 +1,5 @@
 import { ApiError } from './ApiError'
+import { toImageView } from './types/ImageView'
 import RecipeInfosView, { RawRecipeInfosView } from './types/RecipeInfosView'
 
 const getRecipeInfos = async (
@@ -43,19 +44,7 @@ const getRecipeInfos = async (
                     ownerUsername,
                     isPublic,
                     starCount,
-                    mainImage: {
-                        url: rawMainImage.url,
-                        created: new Date(rawMainImage.created),
-                        modified: rawMainImage.modified
-                            ? new Date(rawMainImage.modified)
-                            : null,
-                        filename: rawMainImage.fileName,
-                        mimeType: rawMainImage.mimeType,
-                        alt: rawMainImage.alt,
-                        caption: rawMainImage.caption,
-                        owner: rawMainImage.owner,
-                        isPublic: rawMainImage.isPublic
-                    },
+                    mainImage: toImageView(rawMainImage),
                     slug
                 })
             )

@@ -1,13 +1,15 @@
-import { Route } from '../../routes/recipes_/$username.$slug'
+import FullRecipeView from '../../api/types/FullRecipeView'
 
-export interface RecipeProps {}
+export interface RecipeProps {
+    recipe: FullRecipeView
+}
 
-const Recipe = ({}: RecipeProps) => {
-    const { username, slug } = Route.useParams()
+const Recipe = ({ recipe }: RecipeProps) => {
     return (
-        <>
-            Hello, {username}/{slug}
-        </>
+        <article>
+            <h1>{recipe.title}</h1>
+            <div dangerouslySetInnerHTML={{ __html: recipe.text }} />
+        </article>
     )
 }
 

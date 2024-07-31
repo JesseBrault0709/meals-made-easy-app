@@ -10,16 +10,17 @@ import { fas } from '@fortawesome/free-solid-svg-icons'
 // Font-Awesome: load icons
 library.add(fas)
 
+// Create queryClient
+const queryClient = new QueryClient()
+
 // Create router
 const router = createRouter({
     context: {
-        auth: undefined!
+        auth: undefined!,
+        queryClient
     },
     routeTree
 })
-
-// Create queryClient
-const queryClient = new QueryClient()
 
 // Register the router instance for type safety
 declare module '@tanstack/react-router' {
