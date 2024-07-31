@@ -35,6 +35,9 @@ const Recipes = () => {
                 title={view.title}
                 ownerUsername={view.ownerUsername}
                 mainImageUrl={view.mainImage.url}
+                mainImageAlt={
+                    view.mainImage.alt ? view.mainImage.alt : undefined
+                }
                 starCount={view.starCount}
                 isPublic={view.isPublic}
             />

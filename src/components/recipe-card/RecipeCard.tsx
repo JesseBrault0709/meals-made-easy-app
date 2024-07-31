@@ -4,6 +4,7 @@ export interface RecipeCardProps {
     title: string
     ownerUsername: string
     mainImageUrl: string
+    mainImageAlt?: string
     starCount: number
     isPublic: boolean
 }
@@ -12,12 +13,13 @@ const RecipeCard = ({
     title,
     ownerUsername,
     mainImageUrl,
+    mainImageAlt,
     starCount,
     isPublic
 }: RecipeCardProps) => {
     return (
         <article>
-            <img src={mainImageUrl} />
+            <img src={mainImageUrl} alt={mainImageAlt} title={mainImageAlt} />
             <div className="title-star-count-container">
                 <h1>{title}</h1>
                 <span>
