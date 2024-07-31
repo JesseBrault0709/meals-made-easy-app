@@ -7,11 +7,16 @@ import getRecipe from '../../api/getRecipe'
 import Recipe from '../../pages/recipe/Recipe'
 
 export const Route = createFileRoute('/recipes/$username/$slug')({
-    loader: ({ context, params }) =>
+    loader: ({ abortController, context, params }) =>
         context.queryClient.ensureQueryData({
             queryKey: ['recipe', params.username, params.slug],
             queryFn: () =>
-                getRecipe(context.auth.token, params.username, params.slug)
+                getRecipe({
+                    abortController,
+                    token: context.auth.token,
+                    username: params.username,
+                    slug: params.slug
+                })
         }),
     component() {
         const recipe = useLoaderData({

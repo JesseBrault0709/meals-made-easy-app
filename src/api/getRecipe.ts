@@ -3,6 +3,13 @@ import { ApiError } from './ApiError'
 import FullRecipeView, { RawFullRecipeView } from './types/FullRecipeView'
 import { toImageView } from './types/ImageView'
 
+export interface GetRecipeDeps {
+    token: string | null
+    username: string
+    slug: string
+    abortController: AbortController
+}
+
 const getRecipe = async (
     token: string | null,
     ownerUsername: string,
