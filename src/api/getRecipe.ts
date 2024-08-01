@@ -40,7 +40,8 @@ const getRecipe = async ({
             ownerUsername,
             starCount,
             viewerCount,
-            mainImage: rawMainImage
+            mainImage: rawMainImage,
+            isPublic
         } = (await response.json()) as RawFullRecipeView
         return {
             id,
@@ -53,7 +54,8 @@ const getRecipe = async ({
             ownerUsername,
             starCount,
             viewerCount,
-            mainImage: toImageView(rawMainImage)
+            mainImage: toImageView(rawMainImage),
+            isPublic
         }
     } else if (response.status === 404) {
         throw notFound()

@@ -1,6 +1,8 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import classes from './recipe-card.module.css'
 import { Link } from '@tanstack/react-router'
+import RecipeVisibilityIcon from '../recipe-visibility-icon/RecipeVisibilityIcon'
+import StarCount from '../star-count/StarCount'
+import UserIconAndName from '../user-icon-and-name/UserIconAndName'
+import classes from './recipe-card.module.css'
 
 export interface RecipeCardProps {
     title: string
@@ -49,28 +51,11 @@ const RecipeCard = ({
                     >
                         <h1 className={classes.title}>{title}</h1>
                     </Link>
-                    <span className={classes.starInfo}>
-                        <FontAwesomeIcon
-                            icon="star"
-                            className={classes.star}
-                            size="sm"
-                        />
-                        {starCount}
-                    </span>
+                    <StarCount count={starCount} />
                 </div>
                 <div className={classes.infoRow}>
-                    <span className={classes.userInfo}>
-                        <FontAwesomeIcon
-                            icon="user"
-                            className={classes.userIcon}
-                        />
-                        {ownerUsername}
-                    </span>
-                    {isPublic ? (
-                        <FontAwesomeIcon icon="globe" size="sm" />
-                    ) : (
-                        <FontAwesomeIcon icon="lock" size="sm" />
-                    )}
+                    <UserIconAndName username={ownerUsername} />
+                    <RecipeVisibilityIcon isPublic={isPublic} />
                 </div>
             </div>
         </article>

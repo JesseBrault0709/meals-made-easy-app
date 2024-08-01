@@ -1,0 +1,8 @@
+.user-info {
+    display: flex;
+    column-gap: 5px;
+}
+
+.user-icon {
+    color: var(--primary-red);
+}

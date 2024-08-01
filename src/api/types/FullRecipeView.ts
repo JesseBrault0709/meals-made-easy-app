@@ -12,6 +12,7 @@ export interface RawFullRecipeView {
     starCount: number
     viewerCount: number
     mainImage: RawImageView
+    isPublic: boolean
 }
 
 interface FullRecipeView {
@@ -26,6 +27,7 @@ interface FullRecipeView {
     starCount: number
     viewerCount: number
     mainImage: ImageView
+    isPublic: boolean
 }
 
 export default FullRecipeView
