@@ -1,39 +1,18 @@
-import {
-    Outlet,
-    createRootRouteWithContext,
-    useNavigate,
-    useRouter
-} from '@tanstack/react-router'
+import { Outlet, createRootRouteWithContext } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 import RouterContext from '../RouterContext'
-import { useAuth } from '../auth'
+import Header from '../components/header/Header'
+import Footer from '../components/footer/Footer'
+import './__root.module.css'
 
 const RootLayout = () => {
-    const auth = useAuth()
-    const router = useRouter()
-    const navigate = useNavigate()
-
-    const onLogout = async () => {
-        auth.clearToken(async () => {
-            await router.invalidate()
-            await navigate({ to: '/login' })
-        })
-    }
-
     return (
         <>
-            <header>
-                <h1>Meals Made Easy</h1>
-                <nav>
-                    <button onClick={onLogout}>Logout</button>
-                </nav>
-            </header>
+            <Header />
             <main>
                 <Outlet />
             </main>
-            <footer>
-                <p>Copyright 2024 Jesse R. Brault. All rights reserved.</p>
-            </footer>
+            <Footer />
             <TanStackRouterDevtools position="bottom-right" />
         </>
     )

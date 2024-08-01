@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+:root {
+    --primary-white: #ffffff;
+    --primary-red: #91351d;
+    --primary-yellow: #ffb61d;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+a {
+    color: var(--primary-red);
+}
+
+a:visited {
+    color: var(--primary-red);
+}
+
+a:hover {
+    color: hsl(from var(--primary-red) h s l / 0.9);
+}

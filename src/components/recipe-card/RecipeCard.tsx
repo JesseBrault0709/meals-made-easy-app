@@ -38,28 +38,40 @@ const RecipeCard = ({
                 />
             </Link>
             <div className={classes.infoContainer}>
-                <Link
-                    to="/recipes/$username/$slug"
-                    params={{
-                        username: ownerUsername,
-                        slug
-                    }}
-                >
-                    <h1 className={classes.title}>{title}</h1>
-                </Link>
-                <span>
-                    <FontAwesomeIcon icon="star" size="sm" />
-                    {starCount}
-                </span>
-                <span>
-                    <FontAwesomeIcon icon="user" />
-                    {ownerUsername}
-                </span>
-                {isPublic ? (
-                    <FontAwesomeIcon icon="globe" size="sm" />
-                ) : (
-                    <FontAwesomeIcon icon="lock" size="sm" />
-                )}
+                <div className={classes.infoRow}>
+                    <Link
+                        className={classes.titleLink}
+                        to="/recipes/$username/$slug"
+                        params={{
+                            username: ownerUsername,
+                            slug
+                        }}
+                    >
+                        <h1 className={classes.title}>{title}</h1>
+                    </Link>
+                    <span className={classes.starInfo}>
+                        <FontAwesomeIcon
+                            icon="star"
+                            className={classes.star}
+                            size="sm"
+                        />
+                        {starCount}
+                    </span>
+                </div>
+                <div className={classes.infoRow}>
+                    <span className={classes.userInfo}>
+                        <FontAwesomeIcon
+                            icon="user"
+                            className={classes.userIcon}
+                        />
+                        {ownerUsername}
+                    </span>
+                    {isPublic ? (
+                        <FontAwesomeIcon icon="globe" size="sm" />
+                    ) : (
+                        <FontAwesomeIcon icon="lock" size="sm" />
+                    )}
+                </div>
             </div>
         </article>
     )

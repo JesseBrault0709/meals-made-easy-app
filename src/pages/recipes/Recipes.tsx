@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useAuth } from '../../auth'
 import { ApiError } from '../../api/ApiError'
 import RecipeCard from '../../components/recipe-card/RecipeCard'
+import classes from './recipes.module.css'
 
 const Recipes = () => {
     const [pageNumber, setPageNumber] = useState(0)
@@ -35,20 +36,29 @@ const Recipes = () => {
             return <p>Error: {error.message}</p>
         }
     } else {
-        return data.content.map(view => (
-            <RecipeCard
-                key={view.id}
-                title={view.title}
-                ownerUsername={view.ownerUsername}
-                slug={view.slug}
-                mainImageUrl={view.mainImage.url}
-                mainImageAlt={
-                    view.mainImage.alt ? view.mainImage.alt : undefined
-                }
-                starCount={view.starCount}
-                isPublic={view.isPublic}
-            />
-        ))
+        return (
+            <>
+                <h1>Recipes</h1>
+                <section className={classes.recipeList}>
+                    {data.content.map(view => (
+                        <RecipeCard
+                            key={view.id}
+                            title={view.title}
+                            ownerUsername={view.ownerUsername}
+                            slug={view.slug}
+                            mainImageUrl={view.mainImage.url}
+                            mainImageAlt={
+                                view.mainImage.alt
+                                    ? view.mainImage.alt
+                                    : undefined
+                            }
+                            starCount={view.starCount}
+                            isPublic={view.isPublic}
+                        />
+                    ))}
+                </section>
+            </>
+        )
     }
 }
 

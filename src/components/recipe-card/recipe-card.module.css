@@ -1,18 +1,44 @@
 .recipe-card {
-    max-width: 400px;
-    border: 1px solid black;
+    justify-self: stretch;
 }
 
 .recipe-image {
-    max-width: 100%;
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
 }
 
 .info-container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    align-items: baseline;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
 }
 
 .title {
     margin-block: 0;
+    font-size: 18px;
+}
+
+.star-info {
+    display: flex;
+    column-gap: 5px;
+    align-items: center;
+}
+
+.star {
+    color: var(--primary-yellow);
+}
+
+.user-info {
+    display: flex;
+    column-gap: 5px;
+}
+
+.user-icon {
+    color: var(--primary-red);
 }
