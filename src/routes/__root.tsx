@@ -22,11 +22,18 @@ const RootLayout = () => {
 
     return (
         <>
-            <div>
-                <h1>Hello, World.</h1>
-                <button onClick={onLogout}>Logout</button>
+            <header>
+                <h1>Meals Made Easy</h1>
+                <nav>
+                    <button onClick={onLogout}>Logout</button>
+                </nav>
+            </header>
+            <main>
                 <Outlet />
-            </div>
+            </main>
+            <footer>
+                <p>Copyright 2024 Jesse R. Brault. All rights reserved.</p>
+            </footer>
             <TanStackRouterDevtools position="bottom-right" />
         </>
     )

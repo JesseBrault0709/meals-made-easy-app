@@ -27,7 +27,7 @@ const Login = () => {
         if (loginResult._tag === 'success') {
             auth.putToken(loginResult.loginView.accessToken, async () => {
                 await router.invalidate()
-                await navigate({ to: search.redirect ?? '/' })
+                await navigate({ to: search.redirect ?? '/recipes' })
             })
         } else {
             setError(loginResult.error)
@@ -58,7 +58,7 @@ export const Route = createFileRoute('/login')({
     }),
     beforeLoad({ context, search }) {
         if (context.auth.token) {
-            throw redirect({ to: search.redirect || '/' })
+            throw redirect({ to: search.redirect || '/recipes' })
         }
     },
     component: Login

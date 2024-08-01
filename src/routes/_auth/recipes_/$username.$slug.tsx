@@ -4,11 +4,11 @@ import {
     useLoaderData,
     useParams
 } from '@tanstack/react-router'
-import { ApiError } from '../../api/ApiError'
-import getRecipe from '../../api/getRecipe'
-import Recipe from '../../pages/recipe/Recipe'
+import { ApiError } from '../../../api/ApiError'
+import getRecipe from '../../../api/getRecipe'
+import Recipe from '../../../pages/recipe/Recipe'
 
-export const Route = createFileRoute('/recipes/$username/$slug')({
+export const Route = createFileRoute('/_auth/recipes/$username/$slug')({
     loader: ({ abortController, context, params }) =>
         context.queryClient.ensureQueryData({
             queryKey: ['recipe', params.username, params.slug],
@@ -22,7 +22,7 @@ export const Route = createFileRoute('/recipes/$username/$slug')({
         }),
     component() {
         const recipe = useLoaderData({
-            from: '/recipes/$username/$slug'
+            from: '/_auth/recipes/$username/$slug'
         })
         return <Recipe {...{ recipe }} />
     },
@@ -38,7 +38,7 @@ export const Route = createFileRoute('/recipes/$username/$slug')({
     },
     notFoundComponent() {
         const { username, slug } = useParams({
-            from: '/recipes/$username/$slug'
+            from: '/_auth/recipes/$username/$slug'
         })
         return (
             <p>
