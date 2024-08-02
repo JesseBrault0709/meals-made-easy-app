@@ -33,6 +33,12 @@ export const Route = createFileRoute('/_auth/recipes/$username/$slug')({
                     {error.status}: {error.message}
                 </p>
             )
+        } else if (error instanceof Error) {
+            return (
+                <p>
+                    {error.name}: {error.message}
+                </p>
+            )
         }
         return <ErrorComponent error={error} />
     },
