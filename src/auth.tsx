@@ -2,12 +2,14 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 
 export interface AuthContextType {
     token: string | null
-    putToken(token: string, cb?: () => void): void
+    username: string | null
+    putToken(token: string, username: string, cb?: () => void): void
     clearToken(cb?: () => void): void
 }
 
 interface AuthState {
     token: string | null
+    username: string | null
     putCb?: () => void
     clearCb?: () => void
 }
@@ -15,7 +17,10 @@ interface AuthState {
 const AuthContext = createContext<AuthContextType | null>(null)
 
 export const AuthProvider = ({ children }: React.PropsWithChildren) => {
-    const [authState, setAuthState] = useState<AuthState>({ token: null })
+    const [authState, setAuthState] = useState<AuthState>({
+        token: null,
+        username: null
+    })
 
     useEffect(() => {
         if (authState.token === null && authState.clearCb !== undefined) {
@@ -31,15 +36,18 @@ export const AuthProvider = ({ children }: React.PropsWithChildren) => {
         <AuthContext.Provider
             value={{
                 token: authState.token,
-                putToken(token, cb) {
+                username: authState.username,
+                putToken(token, username, cb) {
                     setAuthState({
                         token,
+                        username,
                         putCb: cb
                     })
                 },
                 clearToken(cb) {
                     setAuthState({
                         token: null,
+                        username: null,
                         clearCb: cb
                     })
                 }

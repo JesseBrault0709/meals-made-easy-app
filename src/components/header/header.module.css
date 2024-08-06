@@ -6,6 +6,13 @@ header {
     padding: 20px;
 }
 
+.right {
+    color: var(--primary-white);
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+}
+
 .meals-made-easy {
     color: var(--primary-white);
 }

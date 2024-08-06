@@ -1,4 +1,4 @@
-import ImageView, { RawImageView } from './ImageView'
+import ImageView, { RawImageView, toImageView } from './ImageView'
 
 export interface RawFullRecipeView {
     id: number
@@ -29,5 +29,33 @@ interface FullRecipeView {
     mainImage: ImageView
     isPublic: boolean
 }
+
+export const toFullRecipeView = ({
+    id,
+    created: rawCreated,
+    modified: rawModified,
+    slug,
+    title,
+    text,
+    ownerId,
+    ownerUsername,
+    starCount,
+    viewerCount,
+    mainImage: rawMainImage,
+    isPublic
+}: RawFullRecipeView) => ({
+    id,
+    created: new Date(rawCreated),
+    modified: rawModified ? new Date(rawModified) : null,
+    slug,
+    title,
+    text,
+    ownerId,
+    ownerUsername,
+    starCount,
+    viewerCount,
+    mainImage: toImageView(rawMainImage),
+    isPublic
+})
 
 export default FullRecipeView

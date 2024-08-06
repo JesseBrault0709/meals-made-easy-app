@@ -1,14 +1,17 @@
 import { Outlet, createRootRouteWithContext } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 import RouterContext from '../RouterContext'
-import Header from '../components/header/Header'
+import { useAuth } from '../auth'
 import Footer from '../components/footer/Footer'
+import Header from '../components/header/Header'
 import './__root.module.css'
 
 const RootLayout = () => {
+    const { username } = useAuth()
+
     return (
         <>
-            <Header />
+            <Header username={username ?? undefined} />
             <main>
                 <Outlet />
             </main>

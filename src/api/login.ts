@@ -1,18 +1,4 @@
-export type LoginResult = LoginSuccess | LoginFailure
-
-export interface LoginSuccess {
-    _tag: 'success'
-    loginView: LoginView
-}
-export interface LoginFailure {
-    _tag: 'failure'
-    error: string
-}
-
-export interface LoginView {
-    username: string
-    accessToken: string
-}
+import LoginView, { LoginResult } from './types/LoginView'
 
 const login = async (
     username: string,

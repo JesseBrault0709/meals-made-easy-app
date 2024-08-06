@@ -25,10 +25,14 @@ const Login = () => {
         const password = (formData.get('password') as string | null) ?? ''
         const loginResult = await login(username, password)
         if (loginResult._tag === 'success') {
-            auth.putToken(loginResult.loginView.accessToken, async () => {
-                await router.invalidate()
-                await navigate({ to: search.redirect ?? '/recipes' })
-            })
+            auth.putToken(
+                loginResult.loginView.accessToken,
+                loginResult.loginView.username,
+                async () => {
+                    await router.invalidate()
+                    await navigate({ to: search.redirect ?? '/recipes' })
+                }
+            )
         } else {
             setError(loginResult.error)
         }
