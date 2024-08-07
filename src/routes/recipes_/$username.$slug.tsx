@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import getRecipe from '../../api/getRecipe'
 import { useAuth } from '../../auth'
@@ -10,21 +10,25 @@ export const Route = createFileRoute('/recipes/$username/$slug')({
             from: '/recipes/$username/$slug'
         })
         const authContext = useAuth()
+        const queryClient = useQueryClient()
         const {
             isLoading,
             error,
             data: recipe
-        } = useQuery({
-            queryKey: ['recipe', username, slug],
-            queryFn({ signal: abortSignal }) {
-                return getRecipe({
-                    abortSignal,
-                    authContext,
-                    username,
-                    slug
-                })
-            }
-        })
+        } = useQuery(
+            {
+                queryKey: ['recipe', username, slug],
+                queryFn({ signal: abortSignal }) {
+                    return getRecipe({
+                        abortSignal,
+                        authContext,
+                        username,
+                        slug
+                    })
+                }
+            },
+            queryClient
+        )
         if (isLoading) {
             return 'Loading...'
         } else if (error !== null) {
