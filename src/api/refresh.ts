@@ -1,17 +1,11 @@
 import { LoginResult, RawLoginView } from './types/LoginView'
 
-const login = async (
-    username: string,
-    password: string
-): Promise<LoginResult> => {
+const refresh = async (): Promise<LoginResult> => {
     try {
         const response = await fetch(
-            import.meta.env.VITE_MME_API_URL + '/auth/login',
+            import.meta.env.VITE_MME_API_URL + '/auth/refresh',
             {
-                body: JSON.stringify({ username, password }),
-                headers: {
-                    'Content-type': 'application/json'
-                },
+                credentials: 'include',
                 method: 'POST',
                 mode: 'cors'
             }
@@ -49,7 +43,7 @@ const login = async (
             }
         }
     } catch (fetchError) {
-        console.error(`Unknown error: ${fetchError}`)
+        console.error(`Unknown fetch error: ${fetchError}`)
         return {
             _tag: 'failure',
             error: 'Network error. Please try again later.'
@@ -57,4 +51,4 @@ const login = async (
     }
 }
 
-export default login
+export default refresh

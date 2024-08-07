@@ -9,9 +9,16 @@ export interface LoginFailure {
     error: string
 }
 
+export interface RawLoginView {
+    username: string
+    accessToken: string
+    expires: string
+}
+
 interface LoginView {
     username: string
     accessToken: string
+    expires: Date
 }
 
 export default LoginView

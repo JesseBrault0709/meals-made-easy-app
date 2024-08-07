@@ -1,4 +1,5 @@
 import { ApiError } from './ApiError'
+import ExpiredTokenError from './ExpiredTokenError'
 import { toImageView } from './types/ImageView'
 import RecipeInfosView, { RawRecipeInfosView } from './types/RecipeInfosView'
 
@@ -58,6 +59,8 @@ const getRecipeInfos = async ({
                 })
             )
         }
+    } else if (response.status === 401) {
+        throw new ExpiredTokenError()
     } else {
         throw new ApiError(response.status, response.statusText)
     }

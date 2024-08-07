@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import getRecipeInfos from '../../api/getRecipeInfos'
 import { useState } from 'react'
 import { useAuth } from '../../auth'
@@ -12,16 +12,20 @@ const Recipes = () => {
 
     const { token } = useAuth()
 
-    const { data, isPending, error } = useQuery({
-        queryKey: ['recipeInfos'],
-        queryFn: ({ signal }) =>
-            getRecipeInfos({
-                abortSignal: signal,
-                pageNumber,
-                pageSize,
-                token
-            })
-    })
+    const queryClient = useQueryClient()
+    const { data, isPending, error } = useQuery(
+        {
+            queryKey: ['recipeInfos'],
+            queryFn: ({ signal }) =>
+                getRecipeInfos({
+                    abortSignal: signal,
+                    pageNumber,
+                    pageSize,
+                    token
+                })
+        },
+        queryClient
+    )
 
     if (isPending) {
         return <p>Loading...</p>
