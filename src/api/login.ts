@@ -9,6 +9,7 @@ const login = async (
             import.meta.env.VITE_MME_API_URL + '/auth/login',
             {
                 body: JSON.stringify({ username, password }),
+                credentials: 'include',
                 headers: {
                     'Content-type': 'application/json'
                 },
