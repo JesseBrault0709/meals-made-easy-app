@@ -3,35 +3,49 @@ import {
     QueryClient,
     QueryClientProvider
 } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { useLocation, useNavigate } from '@tanstack/react-router'
 import React, { useState } from 'react'
 import ExpiredTokenError from './api/ExpiredTokenError'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import refresh, { ExpiredRefreshTokenError } from './api/refresh'
+import LoginView from './api/types/LoginView'
 import { useAuth } from './auth'
-import refresh from './api/refresh'
-import { useNavigate } from '@tanstack/react-router'
 
 const AuthAwareQueryClientProvider = ({
     children
 }: React.PropsWithChildren) => {
-    const { putToken } = useAuth()
+    const { putToken, clearToken } = useAuth()
     const navigate = useNavigate()
     const [currentlyRefreshing, setCurrentlyRefreshing] = useState(false)
+    const { href } = useLocation()
 
     const doRefresh = async () => {
         if (!currentlyRefreshing) {
             console.log('starting refresh')
             setCurrentlyRefreshing(true)
-            const refreshResult = await refresh()
-            if (refreshResult._tag === 'success') {
-                console.log('refresh success, putting token...')
-                putToken(
-                    refreshResult.loginView.accessToken,
-                    refreshResult.loginView.username
-                )
-            } else {
-                console.error(`refresh failure: ${refreshResult.error}`)
-                navigate({ to: '/login' }) // not working
+            let refreshResult: LoginView
+            try {
+                refreshResult = await refresh()
+            } catch (error) {
+                if (error instanceof ExpiredRefreshTokenError) {
+                    console.log('refresh-token expired')
+                    setCurrentlyRefreshing(false)
+                    clearToken()
+                    await navigate({
+                        to: '/login',
+                        search: {
+                            expired: true,
+                            redirect: href
+                        }
+                    })
+                    console.log('post-navigate')
+                    return
+                } else {
+                    setCurrentlyRefreshing(false)
+                    throw error
+                }
             }
+            putToken(refreshResult.accessToken, refreshResult.username)
             setCurrentlyRefreshing(false)
             console.log('refresh done')
         }

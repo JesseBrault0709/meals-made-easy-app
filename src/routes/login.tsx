@@ -16,7 +16,7 @@ const Login = () => {
 
     const router = useRouter()
     const navigate = useNavigate()
-    const search = useSearch({ from: '/login' })
+    const { redirect, expired } = useSearch({ from: '/login' })
 
     const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -30,7 +30,10 @@ const Login = () => {
                 loginResult.loginView.username,
                 async () => {
                     await router.invalidate()
-                    await navigate({ to: search.redirect ?? '/recipes' })
+                    await navigate({
+                        to: redirect ?? '/recipes',
+                        search: {}
+                    })
                 }
             )
         } else {
@@ -41,6 +44,9 @@ const Login = () => {
     return (
         <div>
             <h2>Login Page</h2>
+            {expired ? (
+                <p>Your session has expired. Please login again.</p>
+            ) : null}
             <form onSubmit={onSubmit}>
                 <label htmlFor="username">Username</label>
                 <input id="username" name="username" type="text" />
@@ -58,11 +64,12 @@ const Login = () => {
 
 export const Route = createFileRoute('/login')({
     validateSearch: z.object({
+        expired: z.boolean().optional().catch(false),
         redirect: z.string().optional().catch('')
     }),
     beforeLoad({ context, search }) {
-        if (context.auth.token) {
-            throw redirect({ to: search.redirect || '/recipes' })
+        if (!(search.expired || context.auth.token === null)) {
+            throw redirect({ to: '/recipes' })
         }
     },
     component: Login
