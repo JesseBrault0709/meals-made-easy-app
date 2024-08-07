@@ -4,7 +4,7 @@ import {
     QueryClientProvider
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { useLocation, useNavigate } from '@tanstack/react-router'
+import { useRouter } from '@tanstack/react-router'
 import React, { useState } from 'react'
 import ExpiredTokenError from './api/ExpiredTokenError'
 import refresh, { ExpiredRefreshTokenError } from './api/refresh'
@@ -15,9 +15,8 @@ const AuthAwareQueryClientProvider = ({
     children
 }: React.PropsWithChildren) => {
     const { putToken, clearToken } = useAuth()
-    const navigate = useNavigate()
+    const router = useRouter()
     const [currentlyRefreshing, setCurrentlyRefreshing] = useState(false)
-    const { href } = useLocation()
 
     const doRefresh = async () => {
         if (!currentlyRefreshing) {
@@ -31,11 +30,11 @@ const AuthAwareQueryClientProvider = ({
                     console.log('refresh-token expired')
                     setCurrentlyRefreshing(false)
                     clearToken()
-                    await navigate({
+                    await router.navigate({
                         to: '/login',
                         search: {
                             expired: true,
-                            redirect: href
+                            redirect: router.state.location.href
                         }
                     })
                     console.log('post-navigate')
@@ -56,6 +55,13 @@ const AuthAwareQueryClientProvider = ({
             new QueryClient({
                 defaultOptions: {
                     queries: {
+                        retry(failureCount, error) {
+                            if (error instanceof ExpiredTokenError) {
+                                return false
+                            } else {
+                                return failureCount <= 3
+                            }
+                        },
                         retryDelay(failureCount, error) {
                             if (error instanceof ExpiredTokenError) {
                                 return 0
@@ -68,7 +74,6 @@ const AuthAwareQueryClientProvider = ({
                 queryCache: new QueryCache({
                     onError(error) {
                         if (error instanceof ExpiredTokenError) {
-                            console.error(error.message)
                             doRefresh()
                         }
                     }
