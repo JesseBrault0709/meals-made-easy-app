@@ -65,7 +65,7 @@ export const Route = createFileRoute('/login')({
         redirect: z.string().optional().catch('')
     }),
     beforeLoad({ context, search }) {
-        if (!(search.reason !== undefined || context.auth.token === null)) {
+        if (search.reason === undefined && context.auth.token !== null) {
             throw redirect({ to: '/recipes' })
         }
     },
