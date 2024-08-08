@@ -4,7 +4,7 @@ import { useRouter } from '@tanstack/react-router'
 import React, { useState } from 'react'
 import { ApiError } from './api/ApiError'
 import ExpiredTokenError from './api/ExpiredTokenError'
-import refresh, { ExpiredRefreshTokenError } from './api/refresh'
+import refresh, { RefreshTokenError } from './api/refresh'
 import LoginView from './api/types/LoginView'
 import { useAuth } from './auth'
 
@@ -21,14 +21,14 @@ const AuthAwareQueryClientProvider = ({ children }: React.PropsWithChildren) => 
             try {
                 refreshResult = await refresh()
             } catch (error) {
-                if (error instanceof ExpiredRefreshTokenError) {
-                    console.log('refresh-token expired')
+                if (error instanceof RefreshTokenError) {
+                    console.log(`RefreshTokenError: ${error.reason}`)
                     setCurrentlyRefreshing(false)
                     clearToken()
                     await router.navigate({
                         to: '/login',
                         search: {
-                            expired: true,
+                            reason: error.reason,
                             redirect: router.state.location.href
                         }
                     })

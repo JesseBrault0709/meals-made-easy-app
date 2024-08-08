@@ -10,7 +10,7 @@ const Login = () => {
 
     const router = useRouter()
     const navigate = useNavigate()
-    const { redirect, expired } = useSearch({ from: '/login' })
+    const { redirect, reason } = useSearch({ from: '/login' })
 
     const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
@@ -31,10 +31,19 @@ const Login = () => {
         }
     }
 
+    let message: string | null = null
+    if (reason !== undefined) {
+        if (reason === 'INVALID_REFRESH_TOKEN' || reason === 'EXPIRED_REFRESH_TOKEN') {
+            message = 'Your session has expired. Please login again.'
+        } else {
+            message = 'Please login to view this page.'
+        }
+    }
+
     return (
         <div>
             <h2>Login Page</h2>
-            {expired ? <p>Your session has expired. Please login again.</p> : null}
+            {message !== null ? <p>{message}</p> : null}
             <form onSubmit={onSubmit}>
                 <label htmlFor="username">Username</label>
                 <input id="username" name="username" type="text" />
@@ -52,11 +61,11 @@ const Login = () => {
 
 export const Route = createFileRoute('/login')({
     validateSearch: z.object({
-        expired: z.boolean().optional().catch(false),
+        reason: z.enum(['INVALID_REFRESH_TOKEN', 'EXPIRED_REFRESH_TOKEN', 'NO_REFRESH_TOKEN']).optional(),
         redirect: z.string().optional().catch('')
     }),
     beforeLoad({ context, search }) {
-        if (!(search.expired || context.auth.token === null)) {
+        if (!(search.reason !== undefined || context.auth.token === null)) {
             throw redirect({ to: '/recipes' })
         }
     },

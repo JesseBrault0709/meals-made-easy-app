@@ -1,10 +1,13 @@
 import { ApiError } from './ApiError'
+import LoginExceptionView from './types/LoginExceptionView'
 import LoginView, { RawLoginView } from './types/LoginView'
 
-export class ExpiredRefreshTokenError extends ApiError {
-    constructor() {
-        super(401, 'Expired refresh token.')
-        Object.setPrototypeOf(this, ExpiredRefreshTokenError.prototype)
+export type RefreshTokenErrorReason = 'INVALID_REFRESH_TOKEN' | 'EXPIRED_REFRESH_TOKEN' | 'NO_REFRESH_TOKEN'
+
+export class RefreshTokenError extends ApiError {
+    constructor(public reason: RefreshTokenErrorReason) {
+        super(401, 'Refresh token error.')
+        Object.setPrototypeOf(this, RefreshTokenError.prototype)
     }
 }
 
@@ -31,7 +34,8 @@ const refresh = async (): Promise<LoginView> => {
             expires: new Date(rawExpires)
         }
     } else if (response.status === 401) {
-        throw new ExpiredRefreshTokenError()
+        const { reason } = (await response.json()) as LoginExceptionView
+        throw new RefreshTokenError(reason as RefreshTokenErrorReason)
     } else {
         throw new ApiError(response.status, response.statusText)
     }
