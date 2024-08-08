@@ -1,19 +1,14 @@
-import {
-    QueryCache,
-    QueryClient,
-    QueryClientProvider
-} from '@tanstack/react-query'
+import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { useRouter } from '@tanstack/react-router'
 import React, { useState } from 'react'
+import { ApiError } from './api/ApiError'
 import ExpiredTokenError from './api/ExpiredTokenError'
 import refresh, { ExpiredRefreshTokenError } from './api/refresh'
 import LoginView from './api/types/LoginView'
 import { useAuth } from './auth'
 
-const AuthAwareQueryClientProvider = ({
-    children
-}: React.PropsWithChildren) => {
+const AuthAwareQueryClientProvider = ({ children }: React.PropsWithChildren) => {
     const { putToken, clearToken } = useAuth()
     const router = useRouter()
     const [currentlyRefreshing, setCurrentlyRefreshing] = useState(false)
@@ -56,7 +51,10 @@ const AuthAwareQueryClientProvider = ({
                 defaultOptions: {
                     queries: {
                         retry(failureCount, error) {
-                            if (error instanceof ExpiredTokenError) {
+                            if (
+                                error instanceof ExpiredTokenError ||
+                                (error instanceof ApiError && error.status === 404)
+                            ) {
                                 return false
                             } else {
                                 return failureCount <= 3

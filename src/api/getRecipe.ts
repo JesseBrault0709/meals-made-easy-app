@@ -1,4 +1,3 @@
-import { notFound } from '@tanstack/react-router'
 import { AuthContextType } from '../auth'
 import { ApiError } from './ApiError'
 import ExpiredTokenError from './ExpiredTokenError'
@@ -25,9 +24,6 @@ const getRecipe = async ({ authContext, username, slug, abortSignal }: GetRecipe
         return toFullRecipeView((await response.json()) as RawFullRecipeView)
     } else if (response.status === 401) {
         throw new ExpiredTokenError()
-    } else if (response.status === 404) {
-        // no such resource
-        throw notFound()
     } else {
         throw new ApiError(response.status, response.statusText)
     }

@@ -1,9 +1,10 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, useParams } from '@tanstack/react-router'
+import { ApiError } from '../../api/ApiError'
+import getImage from '../../api/getImage'
 import getRecipe from '../../api/getRecipe'
 import { useAuth } from '../../auth'
 import Recipe from '../../pages/recipe/Recipe'
-import getImage from '../../api/getImage'
 
 export const Route = createFileRoute('/recipes/$username/$slug')({
     component() {
@@ -52,7 +53,15 @@ export const Route = createFileRoute('/recipes/$username/$slug')({
         if (isLoading || isImageLoading) {
             return 'Loading...'
         } else if (error !== null) {
-            return `Error: ${error.name} ${error.message}`
+            if (error instanceof ApiError) {
+                if (error.status === 404) {
+                    return `No such recipe.`
+                } else {
+                    return `ApiError: ${error.status} ${error.message}`
+                }
+            } else {
+                return `Error: ${error.name} ${error.message}`
+            }
         } else if (imageError !== null) {
             return `Image loading error: ${imageError} ${imageError.message}`
         } else if (recipe !== undefined && imgUrl !== undefined) {
