@@ -38,7 +38,8 @@ const Recipes = () => {
                               recipeInfoView.mainImage.owner.username,
                               recipeInfoView.mainImage.filename
                           ],
-                          queryFn: async ({ signal }) => {
+                          queryFn: async ({ signal }: any) => {
+                              // any needed in the params
                               const imgUrl = await getImage({
                                   accessToken: token,
                                   signal,
@@ -78,20 +79,11 @@ const Recipes = () => {
                             ownerUsername={view.ownerUsername}
                             slug={view.slug}
                             mainImageUrl={
-                                slugsAndImgUrls.find(
-                                    ({ data: slugAndImgUrl }) => {
-                                        return (
-                                            slugAndImgUrl !== undefined &&
-                                            slugAndImgUrl.slug === view.slug
-                                        )
-                                    }
-                                )?.data!.imgUrl ?? '' // hacky workaround. should pass a kind of <Image> child which loads its own data
+                                slugsAndImgUrls.find(({ data: slugAndImgUrl }) => {
+                                    return slugAndImgUrl !== undefined && slugAndImgUrl.slug === view.slug
+                                })?.data!.imgUrl ?? '' // hacky workaround. should pass a kind of <Image> child which loads its own data
                             }
-                            mainImageAlt={
-                                view.mainImage.alt
-                                    ? view.mainImage.alt
-                                    : undefined
-                            }
+                            mainImageAlt={view.mainImage.alt ? view.mainImage.alt : undefined}
                             starCount={view.starCount}
                             isPublic={view.isPublic}
                         />
