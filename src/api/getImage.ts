@@ -7,11 +7,7 @@ export interface GetImageDeps {
     url: string
 }
 
-const getImage = async ({
-    accessToken,
-    signal,
-    url
-}: GetImageDeps): Promise<string> => {
+const getImage = async ({ accessToken, signal, url }: GetImageDeps): Promise<string> => {
     const headers = new Headers()
     if (accessToken !== null) {
         headers.set('Authorization', `Bearer ${accessToken}`)

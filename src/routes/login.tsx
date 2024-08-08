@@ -1,10 +1,4 @@
-import {
-    createFileRoute,
-    redirect,
-    useNavigate,
-    useRouter,
-    useSearch
-} from '@tanstack/react-router'
+import { createFileRoute, redirect, useNavigate, useRouter, useSearch } from '@tanstack/react-router'
 import { FormEvent, useState } from 'react'
 import { z } from 'zod'
 import login from '../api/login'
@@ -25,17 +19,13 @@ const Login = () => {
         const password = (formData.get('password') as string | null) ?? ''
         const loginResult = await login(username, password)
         if (loginResult._tag === 'success') {
-            auth.putToken(
-                loginResult.loginView.accessToken,
-                loginResult.loginView.username,
-                async () => {
-                    await router.invalidate()
-                    await navigate({
-                        to: redirect ?? '/recipes',
-                        search: {}
-                    })
-                }
-            )
+            auth.putToken(loginResult.loginView.accessToken, loginResult.loginView.username, async () => {
+                await router.invalidate()
+                await navigate({
+                    to: redirect ?? '/recipes',
+                    search: {}
+                })
+            })
         } else {
             setError(loginResult.error)
         }
@@ -44,9 +34,7 @@ const Login = () => {
     return (
         <div>
             <h2>Login Page</h2>
-            {expired ? (
-                <p>Your session has expired. Please login again.</p>
-            ) : null}
+            {expired ? <p>Your session has expired. Please login again.</p> : null}
             <form onSubmit={onSubmit}>
                 <label htmlFor="username">Username</label>
                 <input id="username" name="username" type="text" />

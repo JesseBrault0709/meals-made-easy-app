@@ -7,17 +7,9 @@ export interface RecipeVisibilityIconProps {
 
 const RecipeVisibilityIcon = ({ isPublic }: RecipeVisibilityIconProps) =>
     isPublic ? (
-        <FontAwesomeIcon
-            icon="globe"
-            className={classes.recipeVisibilityIcon}
-            size="sm"
-        />
+        <FontAwesomeIcon icon="globe" className={classes.recipeVisibilityIcon} size="sm" />
     ) : (
-        <FontAwesomeIcon
-            icon="lock"
-            className={classes.recipeVisibilityIcon}
-            size="sm"
-        />
+        <FontAwesomeIcon icon="lock" className={classes.recipeVisibilityIcon} size="sm" />
     )
 
 export default RecipeVisibilityIcon

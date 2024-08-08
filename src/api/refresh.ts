@@ -11,14 +11,11 @@ export class ExpiredRefreshTokenError extends ApiError {
 const refresh = async (): Promise<LoginView> => {
     let response: Response
     try {
-        response = await fetch(
-            import.meta.env.VITE_MME_API_URL + '/auth/refresh',
-            {
-                credentials: 'include',
-                method: 'POST',
-                mode: 'cors'
-            }
-        )
+        response = await fetch(import.meta.env.VITE_MME_API_URL + '/auth/refresh', {
+            credentials: 'include',
+            method: 'POST',
+            mode: 'cors'
+        })
     } catch (fetchError) {
         if (fetchError instanceof TypeError) {
             throw fetchError // rethrow network issues
@@ -27,11 +24,7 @@ const refresh = async (): Promise<LoginView> => {
         }
     }
     if (response.ok) {
-        const {
-            username,
-            accessToken,
-            expires: rawExpires
-        } = (await response.json()) as RawLoginView
+        const { username, accessToken, expires: rawExpires } = (await response.json()) as RawLoginView
         return {
             username,
             accessToken,

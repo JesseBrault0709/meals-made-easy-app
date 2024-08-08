@@ -32,12 +32,7 @@ const RecipeCard = ({
                     slug
                 }}
             >
-                <img
-                    className={classes.recipeImage}
-                    src={mainImageUrl}
-                    alt={mainImageAlt}
-                    title={mainImageAlt}
-                />
+                <img className={classes.recipeImage} src={mainImageUrl} alt={mainImageAlt} title={mainImageAlt} />
             </Link>
             <div className={classes.infoContainer}>
                 <div className={classes.infoRow}>

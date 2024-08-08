@@ -1,28 +1,18 @@
 import { LoginResult, RawLoginView } from './types/LoginView'
 
-const login = async (
-    username: string,
-    password: string
-): Promise<LoginResult> => {
+const login = async (username: string, password: string): Promise<LoginResult> => {
     try {
-        const response = await fetch(
-            import.meta.env.VITE_MME_API_URL + '/auth/login',
-            {
-                body: JSON.stringify({ username, password }),
-                credentials: 'include',
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                method: 'POST',
-                mode: 'cors'
-            }
-        )
+        const response = await fetch(import.meta.env.VITE_MME_API_URL + '/auth/login', {
+            body: JSON.stringify({ username, password }),
+            credentials: 'include',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            method: 'POST',
+            mode: 'cors'
+        })
         if (response.ok) {
-            const {
-                username,
-                accessToken,
-                expires: rawExpires
-            } = (await response.json()) as RawLoginView
+            const { username, accessToken, expires: rawExpires } = (await response.json()) as RawLoginView
             return {
                 _tag: 'success',
                 loginView: {
@@ -36,13 +26,10 @@ const login = async (
             if (response.status === 401) {
                 error = 'Invalid username or password.'
             } else if (response.status === 500) {
-                error =
-                    'There was an internal server error. Please try again later.'
+                error = 'There was an internal server error. Please try again later.'
             } else {
                 error = 'Unknown error.'
-                console.error(
-                    `Unknown error: ${response.status} ${response.statusText}`
-                )
+                console.error(`Unknown error: ${response.status} ${response.statusText}`)
             }
             return {
                 _tag: 'failure',

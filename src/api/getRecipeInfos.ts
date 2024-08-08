@@ -20,18 +20,13 @@ const getRecipeInfos = async ({
     if (token !== null) {
         headers.set('Authorization', `Bearer ${token}`)
     }
-    const response = await fetch(
-        import.meta.env.VITE_MME_API_URL +
-            `/recipes?page=${pageNumber}&size=${pageSize}`,
-        {
-            signal: abortSignal,
-            headers,
-            mode: 'cors'
-        }
-    )
+    const response = await fetch(import.meta.env.VITE_MME_API_URL + `/recipes?page=${pageNumber}&size=${pageSize}`, {
+        signal: abortSignal,
+        headers,
+        mode: 'cors'
+    })
     if (response.ok) {
-        const { pageNumber, pageSize, content } =
-            (await response.json()) as RawRecipeInfosView
+        const { pageNumber, pageSize, content } = (await response.json()) as RawRecipeInfosView
         return {
             pageNumber,
             pageSize,

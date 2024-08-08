@@ -38,11 +38,7 @@ export const Route = createFileRoute('/recipes/$username/$slug')({
         } = useQuery(
             {
                 enabled: recipe !== undefined,
-                queryKey: [
-                    'images',
-                    recipe?.mainImage.owner.username,
-                    recipe?.mainImage.filename
-                ],
+                queryKey: ['images', recipe?.mainImage.owner.username, recipe?.mainImage.filename],
                 queryFn: ({ signal }) =>
                     getImage({
                         accessToken: authContext.token,
