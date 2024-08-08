@@ -1,8 +1,9 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import getRecipeInfos from '../../api/getRecipeInfos'
+import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { useAuth } from '../../auth'
 import { ApiError } from '../../api/ApiError'
+import getImage from '../../api/getImage'
+import getRecipeInfos from '../../api/getRecipeInfos'
+import { useAuth } from '../../auth'
 import RecipeCard from '../../components/recipe-card/RecipeCard'
 import classes from './recipes.module.css'
 
@@ -27,6 +28,32 @@ const Recipes = () => {
         queryClient
     )
 
+    const slugsAndImgUrls = useQueries({
+        queries:
+            data !== undefined
+                ? data.content.map(recipeInfoView => {
+                      return {
+                          queryKey: [
+                              'images',
+                              recipeInfoView.mainImage.owner.username,
+                              recipeInfoView.mainImage.filename
+                          ],
+                          queryFn: async ({ signal }) => {
+                              const imgUrl = await getImage({
+                                  accessToken: token,
+                                  signal,
+                                  url: recipeInfoView.mainImage.url
+                              })
+                              return {
+                                  slug: recipeInfoView.slug,
+                                  imgUrl
+                              }
+                          }
+                      }
+                  })
+                : []
+    })
+
     if (isPending) {
         return <p>Loading...</p>
     } else if (error) {
@@ -50,7 +77,16 @@ const Recipes = () => {
                             title={view.title}
                             ownerUsername={view.ownerUsername}
                             slug={view.slug}
-                            mainImageUrl={view.mainImage.url}
+                            mainImageUrl={
+                                slugsAndImgUrls.find(
+                                    ({ data: slugAndImgUrl }) => {
+                                        return (
+                                            slugAndImgUrl !== undefined &&
+                                            slugAndImgUrl.slug === view.slug
+                                        )
+                                    }
+                                )?.data!.imgUrl ?? '' // hacky workaround. should pass a kind of <Image> child which loads its own data
+                            }
                             mainImageAlt={
                                 view.mainImage.alt
                                     ? view.mainImage.alt

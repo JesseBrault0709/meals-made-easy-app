@@ -6,13 +6,14 @@ import classes from './recipe.module.css'
 
 export interface RecipeProps {
     recipe: FullRecipeView
+    imgUrl: string
 }
 
-const Recipe = ({ recipe }: RecipeProps) => {
+const Recipe = ({ recipe, imgUrl }: RecipeProps) => {
     return (
         <div className={classes.fullRecipeContainer}>
             <article className={classes.fullRecipe}>
-                <img src={recipe.mainImage.url} className={classes.mainImage} />
+                <img src={imgUrl} className={classes.mainImage} />
                 <div className={classes.infoRow}>
                     <h1>{recipe.title}</h1>
                     <StarCount count={recipe.starCount} />
