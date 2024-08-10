@@ -1,19 +1,30 @@
 .full-recipe-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    max-width: 100%;
 }
 
 .full-recipe {
-    max-width: 600px;
+    max-width: 80ch;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
-.full-recipe .main-image {
-    width: 100%;
+.info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
-.full-recipe .info-row {
+.info-row {
     display: flex;
     justify-content: space-between;
+}
+
+.recipe-title {
+    margin-block: 0.5em;
+}
+
+.main-image {
+    width: 100%;
 }
