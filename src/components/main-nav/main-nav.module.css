@@ -1,0 +1,11 @@
+.main-nav {
+    max-width: 40ch;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.main-nav-link {
+    font-size: 20px;
+}
