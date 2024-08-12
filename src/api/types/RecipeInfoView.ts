@@ -1,11 +1,12 @@
 import ImageView, { RawImageView } from './ImageView'
+import UserInfoView from './UserInfoView'
 
 export interface RawRecipeInfoView {
     id: number
     updated: string
     title: string
     ownerId: number
-    ownerUsername: string
+    owner: UserInfoView
     isPublic: boolean
     starCount: number
     mainImage: RawImageView
@@ -16,8 +17,7 @@ interface RecipeInfoView {
     id: number
     updated: Date
     title: string
-    ownerId: number
-    ownerUsername: string
+    owner: UserInfoView
     isPublic: boolean
     starCount: number
     mainImage: ImageView

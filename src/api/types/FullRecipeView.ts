@@ -1,4 +1,5 @@
 import ImageView, { RawImageView, toImageView } from './ImageView'
+import UserInfoView from './UserInfoView'
 
 export interface RawFullRecipeView {
     id: number
@@ -7,8 +8,7 @@ export interface RawFullRecipeView {
     slug: string
     title: string
     text: string
-    ownerId: number
-    ownerUsername: string
+    owner: UserInfoView
     starCount: number
     viewerCount: number
     mainImage: RawImageView
@@ -22,8 +22,7 @@ interface FullRecipeView {
     slug: string
     title: string
     text: string
-    ownerId: number
-    ownerUsername: string
+    owner: UserInfoView
     starCount: number
     viewerCount: number
     mainImage: ImageView
@@ -37,8 +36,7 @@ export const toFullRecipeView = ({
     slug,
     title,
     text,
-    ownerId,
-    ownerUsername,
+    owner,
     starCount,
     viewerCount,
     mainImage: rawMainImage,
@@ -50,8 +48,7 @@ export const toFullRecipeView = ({
     slug,
     title,
     text,
-    ownerId,
-    ownerUsername,
+    owner,
     starCount,
     viewerCount,
     mainImage: toImageView(rawMainImage),

@@ -76,7 +76,7 @@ const Recipes = () => {
                         <RecipeCard
                             key={view.id}
                             title={view.title}
-                            ownerUsername={view.ownerUsername}
+                            ownerUsername={view.owner.username}
                             slug={view.slug}
                             mainImageUrl={
                                 slugsAndImgUrls.find(({ data: slugAndImgUrl }) => {

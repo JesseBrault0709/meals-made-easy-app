@@ -19,7 +19,7 @@ const Recipe = ({ recipe, imgUrl }: RecipeProps) => {
                         <StarCount count={recipe.starCount} />
                     </div>
                     <div className={classes.infoRow}>
-                        <UserIconAndName username={recipe.ownerUsername} />
+                        <UserIconAndName username={recipe.owner.username} />
                         <RecipeVisibilityIcon isPublic={recipe.isPublic} />
                     </div>
                 </div>
