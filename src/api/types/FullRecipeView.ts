@@ -7,6 +7,9 @@ export interface RawFullRecipeView {
     modified: string | null
     slug: string
     title: string
+    preparationTime: number
+    cookingTime: number
+    totalTime: number
     text: string
     owner: UserInfoView
     starCount: number
@@ -21,6 +24,9 @@ interface FullRecipeView {
     modified: Date | null
     slug: string
     title: string
+    preparationTime: number
+    cookingTime: number
+    totalTime: number
     text: string
     owner: UserInfoView
     starCount: number
@@ -35,18 +41,24 @@ export const toFullRecipeView = ({
     modified: rawModified,
     slug,
     title,
+    preparationTime,
+    cookingTime,
+    totalTime,
     text,
     owner,
     starCount,
     viewerCount,
     mainImage: rawMainImage,
     isPublic
-}: RawFullRecipeView) => ({
+}: RawFullRecipeView): FullRecipeView => ({
     id,
     created: new Date(rawCreated),
     modified: rawModified ? new Date(rawModified) : null,
     slug,
     title,
+    preparationTime,
+    cookingTime,
+    totalTime,
     text,
     owner,
     starCount,

@@ -5,6 +5,9 @@ export interface RawRecipeInfoView {
     id: number
     updated: string
     title: string
+    preparationTime: number
+    cookingTime: number
+    totalTime: number
     ownerId: number
     owner: UserInfoView
     isPublic: boolean
@@ -17,6 +20,9 @@ interface RecipeInfoView {
     id: number
     updated: Date
     title: string
+    preparationTime: number
+    cookingTime: number
+    totalTime: number
     owner: UserInfoView
     isPublic: boolean
     starCount: number
