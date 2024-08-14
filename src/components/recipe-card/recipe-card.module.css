@@ -23,3 +23,13 @@
     margin-block: 0;
     font-size: 18px;
 }
+
+.star-info {
+    display: flex;
+    column-gap: 5px;
+    align-items: center;
+}
+
+.star {
+    color: var(--primary-yellow);
+}

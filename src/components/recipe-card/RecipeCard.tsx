@@ -1,6 +1,6 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Link } from '@tanstack/react-router'
 import RecipeVisibilityIcon from '../recipe-visibility-icon/RecipeVisibilityIcon'
-import StarCount from '../star-count/StarCount'
 import UserIconAndName from '../user-icon-and-name/UserIconAndName'
 import classes from './recipe-card.module.css'
 
@@ -46,7 +46,10 @@ const RecipeCard = ({
                     >
                         <h1 className={classes.title}>{title}</h1>
                     </Link>
-                    <StarCount count={starCount} />
+                    <span className={classes.starInfo}>
+                        <FontAwesomeIcon icon="star" className={classes.star} size="sm" />
+                        {starCount}
+                    </span>
                 </div>
                 <div className={classes.infoRow}>
                     <UserIconAndName username={ownerUsername} />

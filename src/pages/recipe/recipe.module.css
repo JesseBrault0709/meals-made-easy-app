@@ -28,3 +28,13 @@
 .main-image {
     width: 100%;
 }
+
+.star-button {
+    display: flex;
+    column-gap: 5px;
+    align-items: center;
+}
+
+.star {
+    color: var(--primary-yellow);
+}
