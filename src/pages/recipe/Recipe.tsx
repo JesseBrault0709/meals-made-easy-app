@@ -1,15 +1,15 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { QueryObserverSuccessResult, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import addStar from '../../api/addStar'
 import { ApiError } from '../../api/ApiError'
 import getImage from '../../api/getImage'
 import getRecipe from '../../api/getRecipe'
-import FullRecipeView from '../../api/types/FullRecipeView'
+import removeStar from '../../api/removeStar'
+import GetRecipeView from '../../api/types/GetRecipeView'
 import { useAuth } from '../../auth'
 import RecipeVisibilityIcon from '../../components/recipe-visibility-icon/RecipeVisibilityIcon'
 import UserIconAndName from '../../components/user-icon-and-name/UserIconAndName'
 import classes from './recipe.module.css'
-import addStar from '../../api/addStar'
-import removeStar from '../../api/removeStar'
 
 interface RecipeStarInfoProps {
     starCount: number
@@ -112,12 +112,16 @@ const Recipe = ({ username, slug }: RecipeProps) => {
     const mainImageQuery = useQuery(
         {
             enabled: recipeQuery.isSuccess,
-            queryKey: ['images', recipeQuery.data?.mainImage.owner.username, recipeQuery.data?.mainImage.filename],
+            queryKey: [
+                'images',
+                recipeQuery.data?.recipe.mainImage.owner.username,
+                recipeQuery.data?.recipe.mainImage.filename
+            ],
             queryFn: ({ signal }) =>
                 getImage({
                     accessToken: authContext.token,
                     signal,
-                    url: recipeQuery.data!.mainImage.url
+                    url: recipeQuery.data!.recipe.mainImage.url
                 })
         },
         queryClient
@@ -141,8 +145,9 @@ const Recipe = ({ username, slug }: RecipeProps) => {
         return `Error: ${error.name} ${error.message}`
     }
 
-    const { data: recipe } = recipeQuery as QueryObserverSuccessResult<FullRecipeView>
+    const { data: getRecipeView } = recipeQuery as QueryObserverSuccessResult<GetRecipeView>
     const { data: mainImageUrl } = mainImageQuery as QueryObserverSuccessResult<string>
+    const { recipe, isStarred, isOwner } = getRecipeView
 
     return (
         <div className={classes.fullRecipeContainer}>
@@ -150,12 +155,8 @@ const Recipe = ({ username, slug }: RecipeProps) => {
                 <div className={classes.info}>
                     <div className={classes.infoRow}>
                         <h1 className={classes.recipeTitle}>{recipe.title}</h1>
-                        {recipe.isStarred !== null ? (
-                            <RecipeStarButton
-                                isStarred={recipe.isStarred}
-                                starCount={recipe.starCount}
-                                {...{ username, slug }}
-                            />
+                        {isStarred !== null ? (
+                            <RecipeStarButton starCount={recipe.starCount} {...{ isStarred, username, slug }} />
                         ) : (
                             <RecipeStarInfo starCount={recipe.starCount} />
                         )}
