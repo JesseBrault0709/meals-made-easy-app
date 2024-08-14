@@ -49,6 +49,13 @@ const AuthAwareQueryClientProvider = ({ children }: React.PropsWithChildren) => 
         () =>
             new QueryClient({
                 defaultOptions: {
+                    mutations: {
+                        onError(error) {
+                            if (error instanceof ExpiredTokenError) {
+                                doRefresh()
+                            }
+                        }
+                    },
                     queries: {
                         retry(failureCount, error) {
                             if (
