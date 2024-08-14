@@ -12,7 +12,8 @@ import { routeTree } from './routeTree.gen'
 library.add(fas)
 
 // Create router
-const router = createRouter({
+// Must be `any` because TS complains otherwise
+const router: any = createRouter({
     context: {
         auth: undefined!
     },
@@ -32,11 +33,7 @@ const InnerApp = () => {
         <RouterProvider
             router={router}
             context={{ auth }}
-            InnerWrap={({ children }) => (
-                <AuthAwareQueryClientProvider>
-                    {children}
-                </AuthAwareQueryClientProvider>
-            )}
+            InnerWrap={({ children }) => <AuthAwareQueryClientProvider>{children}</AuthAwareQueryClientProvider>}
         ></RouterProvider>
     )
 }

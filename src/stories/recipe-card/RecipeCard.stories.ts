@@ -12,6 +12,7 @@ type Story = StoryObj<typeof meta>
 
 export const Primary: Story = {
     args: {
+        slug: 'my-recipe',
         title: 'My Recipe',
         ownerUsername: 'JesseBrault',
         starCount: 7,
