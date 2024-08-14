@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { QueryObserverSuccessResult, useQuery, useQueryClient } from '@tanstack/react-query'
+import { QueryObserverSuccessResult, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ApiError } from '../../api/ApiError'
 import getImage from '../../api/getImage'
 import getRecipe from '../../api/getRecipe'
@@ -8,6 +8,8 @@ import { useAuth } from '../../auth'
 import RecipeVisibilityIcon from '../../components/recipe-visibility-icon/RecipeVisibilityIcon'
 import UserIconAndName from '../../components/user-icon-and-name/UserIconAndName'
 import classes from './recipe.module.css'
+import addStar from '../../api/addStar'
+import removeStar from '../../api/removeStar'
 
 export interface RecipeProps {
     username: string
@@ -20,7 +22,7 @@ const Recipe = ({ username, slug }: RecipeProps) => {
 
     const recipeQuery = useQuery(
         {
-            queryKey: ['recipe', username, slug],
+            queryKey: ['recipes', username, slug],
             queryFn: ({ signal: abortSignal }) =>
                 getRecipe({
                     abortSignal,
@@ -45,6 +47,50 @@ const Recipe = ({ username, slug }: RecipeProps) => {
         },
         queryClient
     )
+
+    const addStarMutation = useMutation({
+        mutationFn: () => {
+            if (authContext.token !== null) {
+                return addStar({
+                    token: authContext.token,
+                    slug,
+                    username
+                })
+            } else {
+                return Promise.resolve()
+            }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['recipes', username, slug] })
+        }
+    })
+
+    const removeStarMutation = useMutation({
+        mutationFn: () => {
+            if (authContext.token !== null) {
+                return removeStar({
+                    token: authContext.token,
+                    slug,
+                    username
+                })
+            } else {
+                return Promise.resolve()
+            }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['recipes', username, slug] })
+        }
+    })
+
+    const onStarButtonClick = () => {
+        if (recipeQuery.isSuccess) {
+            if (recipeQuery.data.isStarred) {
+                removeStarMutation.mutate()
+            } else {
+                addStarMutation.mutate()
+            }
+        }
+    }
 
     if (recipeQuery.isLoading || mainImageQuery.isLoading) {
         return 'Loading...'
@@ -73,9 +119,9 @@ const Recipe = ({ username, slug }: RecipeProps) => {
                 <div className={classes.info}>
                     <div className={classes.infoRow}>
                         <h1 className={classes.recipeTitle}>{recipe.title}</h1>
-                        <button className={classes.starButton}>
+                        <button className={classes.starButton} onClick={onStarButtonClick}>
                             <FontAwesomeIcon icon="star" className={classes.star} size="sm" />
-                            <span></span>
+                            <span>{recipe.isStarred ? 'Starred' : 'Star'}</span>
                             {recipe.starCount}
                         </button>
                     </div>
