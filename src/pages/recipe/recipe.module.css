@@ -19,6 +19,7 @@
 .info-row {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 .recipe-title {
@@ -29,12 +30,39 @@
     width: 100%;
 }
 
-.star-button {
+.star-container {
     display: flex;
     column-gap: 5px;
     align-items: center;
+    height: 30px;
+}
+
+button.star-container {
+    cursor: pointer;
+    background-color: var(--off-white-1);
+    border: 1px solid var(--off-white-3);
+    border-radius: 5px;
+}
+
+button.star-container:hover {
+    background-color: var(--off-white-2);
 }
 
 .star {
     color: var(--primary-yellow);
+}
+
+.starred {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+}
+
+button .star-count {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    background-color: var(--off-white-3);
+    min-width: 20px;
+    min-height: 16px;
+    border-radius: 50%;
+    text-align: center;
 }

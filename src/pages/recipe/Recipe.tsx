@@ -11,6 +11,81 @@ import classes from './recipe.module.css'
 import addStar from '../../api/addStar'
 import removeStar from '../../api/removeStar'
 
+interface RecipeStarInfoProps {
+    starCount: number
+}
+
+const RecipeStarInfo = ({ starCount }: RecipeStarInfoProps) => {
+    return (
+        <div className={classes.starContainer}>
+            <FontAwesomeIcon icon="star" className={classes.star} size="sm" />
+            <span className={classes.starCount}>{starCount}</span>
+        </div>
+    )
+}
+
+interface RecipeStarButtonProps {
+    username: string
+    slug: string
+    isStarred: boolean
+    starCount: number
+}
+
+const RecipeStarButton = ({ username, slug, isStarred, starCount }: RecipeStarButtonProps) => {
+    const authContext = useAuth()
+    const queryClient = useQueryClient()
+
+    const addStarMutation = useMutation({
+        mutationFn: () => {
+            if (authContext.token !== null) {
+                return addStar({
+                    token: authContext.token,
+                    slug,
+                    username
+                })
+            } else {
+                return Promise.resolve()
+            }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['recipes', username, slug] })
+        }
+    })
+
+    const removeStarMutation = useMutation({
+        mutationFn: () => {
+            if (authContext.token !== null) {
+                return removeStar({
+                    token: authContext.token,
+                    slug,
+                    username
+                })
+            } else {
+                return Promise.resolve()
+            }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['recipes', username, slug] })
+        }
+    })
+
+    const onClick = () => {
+        if (isStarred) {
+            removeStarMutation.mutate()
+        } else {
+            addStarMutation.mutate()
+        }
+    }
+
+    return (
+        <button className={classes.starContainer} onClick={onClick}>
+            <FontAwesomeIcon icon="star" className={classes.star} size="sm" />
+            <span className={classes.starred}>{isStarred ? 'Starred' : 'Star'}</span>
+            <span className={classes.starCount}>{starCount}</span>
+        </button>
+    )
+}
+
 export interface RecipeProps {
     username: string
     slug: string
@@ -48,50 +123,6 @@ const Recipe = ({ username, slug }: RecipeProps) => {
         queryClient
     )
 
-    const addStarMutation = useMutation({
-        mutationFn: () => {
-            if (authContext.token !== null) {
-                return addStar({
-                    token: authContext.token,
-                    slug,
-                    username
-                })
-            } else {
-                return Promise.resolve()
-            }
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['recipes', username, slug] })
-        }
-    })
-
-    const removeStarMutation = useMutation({
-        mutationFn: () => {
-            if (authContext.token !== null) {
-                return removeStar({
-                    token: authContext.token,
-                    slug,
-                    username
-                })
-            } else {
-                return Promise.resolve()
-            }
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['recipes', username, slug] })
-        }
-    })
-
-    const onStarButtonClick = () => {
-        if (recipeQuery.isSuccess) {
-            if (recipeQuery.data.isStarred) {
-                removeStarMutation.mutate()
-            } else {
-                addStarMutation.mutate()
-            }
-        }
-    }
-
     if (recipeQuery.isLoading || mainImageQuery.isLoading) {
         return 'Loading...'
     } else if (recipeQuery.isError) {
@@ -119,11 +150,15 @@ const Recipe = ({ username, slug }: RecipeProps) => {
                 <div className={classes.info}>
                     <div className={classes.infoRow}>
                         <h1 className={classes.recipeTitle}>{recipe.title}</h1>
-                        <button className={classes.starButton} onClick={onStarButtonClick}>
-                            <FontAwesomeIcon icon="star" className={classes.star} size="sm" />
-                            <span>{recipe.isStarred ? 'Starred' : 'Star'}</span>
-                            {recipe.starCount}
-                        </button>
+                        {recipe.isStarred !== null ? (
+                            <RecipeStarButton
+                                isStarred={recipe.isStarred}
+                                starCount={recipe.starCount}
+                                {...{ username, slug }}
+                            />
+                        ) : (
+                            <RecipeStarInfo starCount={recipe.starCount} />
+                        )}
                     </div>
                     <div className={classes.infoRow}>
                         <UserIconAndName username={recipe.owner.username} />

@@ -4,6 +4,12 @@
     --primary-white: #ffffff;
     --primary-red: #91351d;
     --primary-yellow: #ffb61d;
+    --primary-black: #252525;
+    --off-white-1: #eee;
+    --off-white-2: #ddd;
+    --off-white-3: #ccc;
+    --off-white-4: #bbb;
+    --off-white-5: #aaa;
 }
 
 body {
