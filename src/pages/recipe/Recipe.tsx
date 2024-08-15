@@ -10,6 +10,25 @@ import { useAuth } from '../../auth'
 import RecipeVisibilityIcon from '../../components/recipe-visibility-icon/RecipeVisibilityIcon'
 import UserIconAndName from '../../components/user-icon-and-name/UserIconAndName'
 import classes from './recipe.module.css'
+import { useNavigate } from '@tanstack/react-router'
+
+interface EditButtonProps {
+    username: string
+    slug: string
+}
+
+const EditButton = ({ username, slug }: EditButtonProps) => {
+    const navigate = useNavigate()
+    return (
+        <button
+            className={classes.editButton}
+            onClick={() => navigate({ to: '/recipes/$username/$slug/edit', params: { username, slug } })}
+        >
+            <FontAwesomeIcon icon="pencil" className={classes.editIcon} size="sm" />
+            <span className={classes.buttonText}>Edit</span>
+        </button>
+    )
+}
 
 interface RecipeStarInfoProps {
     starCount: number
@@ -19,7 +38,7 @@ const RecipeStarInfo = ({ starCount }: RecipeStarInfoProps) => {
     return (
         <div className={classes.starContainer}>
             <FontAwesomeIcon icon="star" className={classes.star} size="sm" />
-            <span className={classes.starCount}>{starCount}</span>
+            <span className={classes.buttonText}>{starCount}</span>
         </div>
     )
 }
@@ -80,7 +99,7 @@ const RecipeStarButton = ({ username, slug, isStarred, starCount }: RecipeStarBu
     return (
         <button className={classes.starContainer} onClick={onClick}>
             <FontAwesomeIcon icon="star" className={classes.star} size="sm" />
-            <span className={classes.starred}>{isStarred ? 'Starred' : 'Star'}</span>
+            <span className={classes.buttonText}>{isStarred ? 'Starred' : 'Star'}</span>
             <span className={classes.starCount}>{starCount}</span>
         </button>
     )
@@ -155,11 +174,14 @@ const Recipe = ({ username, slug }: RecipeProps) => {
                 <div className={classes.info}>
                     <div className={classes.infoRow}>
                         <h1 className={classes.recipeTitle}>{recipe.title}</h1>
-                        {isStarred !== null ? (
-                            <RecipeStarButton starCount={recipe.starCount} {...{ isStarred, username, slug }} />
-                        ) : (
-                            <RecipeStarInfo starCount={recipe.starCount} />
-                        )}
+                        <div className={classes.infoButtons}>
+                            {isStarred !== null ? (
+                                <RecipeStarButton starCount={recipe.starCount} {...{ isStarred, username, slug }} />
+                            ) : (
+                                <RecipeStarInfo starCount={recipe.starCount} />
+                            )}
+                            {isOwner ? <EditButton {...{ username, slug }} /> : null}
+                        </div>
                     </div>
                     <div className={classes.infoRow}>
                         <UserIconAndName username={recipe.owner.username} />
