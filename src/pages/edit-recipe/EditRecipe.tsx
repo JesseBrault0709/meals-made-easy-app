@@ -101,7 +101,8 @@ const EditRecipe = ({ username, slug }: EditRecipeProps) => {
                     authContext: auth,
                     username,
                     slug,
-                    abortSignal: signal
+                    abortSignal: signal,
+                    includeRawText: true
                 })
         },
         queryClient
@@ -127,7 +128,7 @@ const EditRecipe = ({ username, slug }: EditRecipeProps) => {
                 setPreparationTime(recipe.preparationTime)
                 setCookingTime(recipe.cookingTime)
                 setTotalTime(recipe.totalTime)
-                setRecipeText(recipe.text)
+                setRecipeText(recipe.rawText)
             }
         }
     }, [recipeQuery.isSuccess, recipeQuery.data])

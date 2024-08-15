@@ -18,6 +18,10 @@ export interface RawFullRecipeView {
     isPublic: boolean
 }
 
+export interface RawFullRecipeViewWithRawText extends RawFullRecipeView {
+    rawText: string
+}
+
 interface FullRecipeView {
     id: number
     created: Date
@@ -33,6 +37,10 @@ interface FullRecipeView {
     viewerCount: number
     mainImage: ImageView
     isPublic: boolean
+}
+
+export interface FullRecipeViewWithRawText extends FullRecipeView {
+    rawText: string
 }
 
 export const toFullRecipeView = ({
@@ -65,6 +73,11 @@ export const toFullRecipeView = ({
     viewerCount,
     mainImage: toImageView(rawMainImage),
     isPublic
+})
+
+export const toFullRecipeViewWithRawText = (raw: RawFullRecipeViewWithRawText): FullRecipeViewWithRawText => ({
+    rawText: raw.rawText,
+    ...toFullRecipeView(raw)
 })
 
 export default FullRecipeView
