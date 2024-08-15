@@ -1,6 +1,6 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
-import { RouterProvider, createRouter } from '@tanstack/react-router'
+import { Router, RouterProvider, createRouter } from '@tanstack/react-router'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { AuthProvider, useAuth } from './auth'
@@ -12,8 +12,8 @@ import { routeTree } from './routeTree.gen'
 library.add(fas)
 
 // Create router
-// Must be `any` because TS complains otherwise
-const router: any = createRouter({
+// Type must be explicitly annotated otherwise TS complains
+const router: Router<typeof routeTree, 'preserve'> = createRouter({
     context: {
         auth: undefined!
     },

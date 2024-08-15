@@ -16,6 +16,7 @@ import { Route as LoginImport } from './routes/login'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as AuthIndexImport } from './routes/_auth/index'
 import { Route as RecipesUsernameSlugImport } from './routes/recipes_/$username.$slug'
+import { Route as RecipesUsernameSlugEditImport } from './routes/recipes_/$username.$slug_/edit'
 
 // Create/Update Routes
 
@@ -41,6 +42,11 @@ const AuthIndexRoute = AuthIndexImport.update({
 
 const RecipesUsernameSlugRoute = RecipesUsernameSlugImport.update({
   path: '/recipes/$username/$slug',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const RecipesUsernameSlugEditRoute = RecipesUsernameSlugEditImport.update({
+  path: '/recipes/$username/$slug/edit',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -83,6 +89,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RecipesUsernameSlugImport
       parentRoute: typeof rootRoute
     }
+    '/recipes/$username/$slug/edit': {
+      id: '/recipes/$username/$slug/edit'
+      path: '/recipes/$username/$slug/edit'
+      fullPath: '/recipes/$username/$slug/edit'
+      preLoaderRoute: typeof RecipesUsernameSlugEditImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -93,6 +106,7 @@ export const routeTree = rootRoute.addChildren({
   LoginRoute,
   RecipesRoute,
   RecipesUsernameSlugRoute,
+  RecipesUsernameSlugEditRoute,
 })
 
 /* prettier-ignore-end */
@@ -106,7 +120,8 @@ export const routeTree = rootRoute.addChildren({
         "/_auth",
         "/login",
         "/recipes",
-        "/recipes/$username/$slug"
+        "/recipes/$username/$slug",
+        "/recipes/$username/$slug/edit"
       ]
     },
     "/_auth": {
@@ -127,6 +142,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/recipes/$username/$slug": {
       "filePath": "recipes_/$username.$slug.tsx"
+    },
+    "/recipes/$username/$slug/edit": {
+      "filePath": "recipes_/$username.$slug_/edit.tsx"
     }
   }
 }
