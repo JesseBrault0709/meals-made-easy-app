@@ -7,9 +7,9 @@ export interface RawFullRecipeView {
     modified: string | null
     slug: string
     title: string
-    preparationTime: number
-    cookingTime: number
-    totalTime: number
+    preparationTime: number | null
+    cookingTime: number | null
+    totalTime: number | null
     text: string
     owner: UserInfoView
     starCount: number
@@ -24,9 +24,9 @@ interface FullRecipeView {
     modified: Date | null
     slug: string
     title: string
-    preparationTime: number
-    cookingTime: number
-    totalTime: number
+    preparationTime: number | null
+    cookingTime: number | null
+    totalTime: number | null
     text: string
     owner: UserInfoView
     starCount: number

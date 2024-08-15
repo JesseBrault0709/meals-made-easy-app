@@ -61,7 +61,9 @@ const Login = () => {
 
 export const Route = createFileRoute('/login')({
     validateSearch: z.object({
-        reason: z.enum(['INVALID_REFRESH_TOKEN', 'EXPIRED_REFRESH_TOKEN', 'NO_REFRESH_TOKEN']).optional(),
+        reason: z
+            .enum(['INVALID_REFRESH_TOKEN', 'EXPIRED_REFRESH_TOKEN', 'NO_REFRESH_TOKEN', 'NOT_LOGGED_IN'])
+            .optional(),
         redirect: z.string().optional().catch('')
     }),
     beforeLoad({ context, search }) {
