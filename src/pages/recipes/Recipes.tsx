@@ -33,17 +33,18 @@ const Recipes = () => {
             data !== undefined
                 ? data.content.map(recipeInfoView => {
                       return {
+                          enabled: recipeInfoView.mainImage !== null,
                           queryKey: [
                               'images',
-                              recipeInfoView.mainImage.owner.username,
-                              recipeInfoView.mainImage.filename
+                              recipeInfoView.mainImage?.owner.username,
+                              recipeInfoView.mainImage?.filename
                           ],
                           queryFn: async ({ signal }: any) => {
                               // any needed in the params
                               const imgUrl = await getImage({
                                   accessToken: token,
                                   signal,
-                                  url: recipeInfoView.mainImage.url
+                                  url: recipeInfoView.mainImage!.url
                               })
                               return {
                                   slug: recipeInfoView.slug,
@@ -83,7 +84,7 @@ const Recipes = () => {
                                     return slugAndImgUrl !== undefined && slugAndImgUrl.slug === view.slug
                                 })?.data!.imgUrl ?? '' // hacky workaround. should pass a kind of <Image> child which loads its own data
                             }
-                            mainImageAlt={view.mainImage.alt ? view.mainImage.alt : undefined}
+                            mainImageAlt={view.mainImage?.alt ? view.mainImage.alt : undefined}
                             starCount={view.starCount}
                             isPublic={view.isPublic}
                         />

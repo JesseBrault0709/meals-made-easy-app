@@ -12,7 +12,7 @@ export interface RawRecipeInfoView {
     owner: UserInfoView
     isPublic: boolean
     starCount: number
-    mainImage: RawImageView
+    mainImage: RawImageView | null
     slug: string
 }
 
@@ -26,7 +26,7 @@ interface RecipeInfoView {
     owner: UserInfoView
     isPublic: boolean
     starCount: number
-    mainImage: ImageView
+    mainImage: ImageView | null
     slug: string
 }
 

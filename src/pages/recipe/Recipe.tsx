@@ -130,17 +130,17 @@ const Recipe = ({ username, slug }: RecipeProps) => {
 
     const mainImageQuery = useQuery(
         {
-            enabled: recipeQuery.isSuccess,
+            enabled: recipeQuery.isSuccess && recipeQuery.data!.recipe.mainImage !== null,
             queryKey: [
                 'images',
-                recipeQuery.data?.recipe.mainImage.owner.username,
-                recipeQuery.data?.recipe.mainImage.filename
+                recipeQuery.data?.recipe.mainImage?.owner.username,
+                recipeQuery.data?.recipe.mainImage?.filename
             ],
             queryFn: ({ signal }) =>
                 getImage({
                     accessToken: authContext.token,
                     signal,
-                    url: recipeQuery.data!.recipe.mainImage.url
+                    url: recipeQuery.data!.recipe.mainImage!.url
                 })
         },
         queryClient

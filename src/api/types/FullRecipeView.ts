@@ -14,7 +14,7 @@ export interface RawFullRecipeView {
     owner: UserInfoView
     starCount: number
     viewerCount: number
-    mainImage: RawImageView
+    mainImage: RawImageView | null
     isPublic: boolean
 }
 
@@ -35,7 +35,7 @@ interface FullRecipeView {
     owner: UserInfoView
     starCount: number
     viewerCount: number
-    mainImage: ImageView
+    mainImage: ImageView | null
     isPublic: boolean
 }
 
@@ -71,7 +71,7 @@ export const toFullRecipeView = ({
     owner,
     starCount,
     viewerCount,
-    mainImage: toImageView(rawMainImage),
+    mainImage: rawMainImage !== null ? toImageView(rawMainImage) : null,
     isPublic
 })
 

@@ -1,8 +1,10 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
-import { PropsWithChildren, useEffect, useState } from 'react'
+import { ChangeEventHandler, FormEventHandler, PropsWithChildren, useEffect, useState } from 'react'
 import { ApiError } from '../../api/ApiError'
 import getRecipe from '../../api/getRecipe'
+import UpdateRecipeSpec, { fromFullRecipeView } from '../../api/types/UpdateRecipeSpec'
+import updateRecipe from '../../api/updateRecipe'
 import { useAuth } from '../../auth'
 import classes from './edit-recipe.module.css'
 
@@ -87,9 +89,14 @@ const EditRecipe = ({ username, slug }: EditRecipeProps) => {
     const auth = useAuth()
     const navigate = useNavigate()
 
-    if (auth.token === null) {
-        navigate({ to: '/login', search: { reason: 'NOT_LOGGED_IN', redirect: `/recipes/${username}/${slug}/edit` } })
-    }
+    // useEffect(() => {
+    //     if (auth.token === null) {
+    //         navigate({
+    //             to: '/login',
+    //             search: { reason: 'NOT_LOGGED_IN', redirect: `/recipes/${username}/${slug}/edit` }
+    //         })
+    //     }
+    // }, [auth.token, navigate, username, slug])
 
     const queryClient = useQueryClient()
 
@@ -109,29 +116,81 @@ const EditRecipe = ({ username, slug }: EditRecipeProps) => {
     )
 
     const [isOwner, setIsOwner] = useState(false)
-    const [title, setTitle] = useState('')
-    const [mSlug, setMSlug] = useState('')
-    const [preparationTime, setPreparationTime] = useState<number | null>(null)
-    const [cookingTime, setCookingTime] = useState<number | null>(null)
-    const [totalTime, setTotalTime] = useState<number | null>(null)
-    const [recipeText, setRecipeText] = useState('')
+
+    const [spec, setSpec] = useState<UpdateRecipeSpec>({
+        title: '',
+        preparationTime: null,
+        cookingTime: null,
+        totalTime: null,
+        rawText: '',
+        mainImage: null,
+        isPublic: false
+    })
 
     useEffect(() => {
         if (recipeQuery.isSuccess) {
             const { isOwner, recipe } = recipeQuery.data
-            if (!isOwner) {
-                setIsOwner(false)
-            } else {
-                setIsOwner(true)
-                setTitle(recipe.title)
-                setMSlug(recipe.slug)
-                setPreparationTime(recipe.preparationTime)
-                setCookingTime(recipe.cookingTime)
-                setTotalTime(recipe.totalTime)
-                setRecipeText(recipe.rawText)
+            setIsOwner(isOwner ?? false)
+            if (isOwner) {
+                setSpec(fromFullRecipeView(recipe))
             }
         }
     }, [recipeQuery.isSuccess, recipeQuery.data])
+
+    const mutation = useMutation(
+        {
+            mutationFn: () => {
+                if (auth.token !== null) {
+                    return updateRecipe({
+                        spec,
+                        token: auth.token,
+                        username,
+                        slug
+                    })
+                } else {
+                    return Promise.reject('Must be logged in.')
+                }
+            },
+            onSuccess: data => {
+                setIsOwner(data.isOwner ?? false)
+                setSpec(fromFullRecipeView(data.recipe))
+                queryClient.invalidateQueries({
+                    queryKey: ['recipes', username, slug]
+                })
+            }
+        },
+        queryClient
+    )
+
+    const onSubmit: FormEventHandler<HTMLFormElement> = e => {
+        e.preventDefault()
+        mutation.mutate()
+        return false
+    }
+
+    const getSetSpecText =
+        (prop: keyof UpdateRecipeSpec) =>
+        (value: string): void => {
+            const next = { ...spec }
+            ;(next as any)[prop] = value
+            setSpec(next)
+        }
+
+    const getSetTimeSpec =
+        (prop: keyof UpdateRecipeSpec) =>
+        (value: number | null): void => {
+            const next = { ...spec }
+            ;(next as any)[prop] = value
+            setSpec(next)
+        }
+
+    const getSetSpecTextAsHandler =
+        (prop: keyof UpdateRecipeSpec): ChangeEventHandler<HTMLTextAreaElement | HTMLInputElement> =>
+        (event): void => {
+            const next = { ...spec }
+            ;(next as any)[prop] = event.target.value
+            setSpec(next)
+        }
 
     if (recipeQuery.isLoading) {
         return 'Loading...'
@@ -153,30 +212,45 @@ const EditRecipe = ({ username, slug }: EditRecipeProps) => {
             <div className={classes.articleContainer}>
                 <article>
                     <h1>Edit Recipe</h1>
-                    <form className={classes.editForm}>
+                    <form className={classes.editForm} onSubmit={onSubmit}>
                         <Control id="title" displayName="Title">
-                            <TextInput id="title" value={title} setValue={setTitle} />
-                        </Control>
-
-                        <Control id="slug" displayName="Slug">
-                            <TextInput id="slug" value={mSlug} setValue={setMSlug} />
+                            <TextInput id="title" value={spec.title} setValue={getSetSpecText('title')} />
                         </Control>
 
                         <Control id="preparation-time" displayName="Preparation Time (in minutes)">
-                            <TimeInput id="preparation-time" value={preparationTime} setValue={setPreparationTime} />
+                            <TimeInput
+                                id="preparation-time"
+                                value={spec.preparationTime}
+                                setValue={getSetTimeSpec('preparationTime')}
+                            />
                         </Control>
 
                         <Control id="cooking-time" displayName="Cooking Time (in minutes)">
-                            <TimeInput id="cooking-time" value={cookingTime} setValue={setCookingTime} />
+                            <TimeInput
+                                id="cooking-time"
+                                value={spec.cookingTime}
+                                setValue={getSetTimeSpec('cookingTime')}
+                            />
                         </Control>
 
                         <Control id="total-time" displayName="Total Time (in minutes)">
-                            <TimeInput id="total-time" value={totalTime} setValue={setTotalTime} />
+                            <TimeInput id="total-time" value={spec.totalTime} setValue={getSetTimeSpec('totalTime')} />
                         </Control>
 
                         <Control id="recipe-text" displayName="Recipe Text">
-                            <textarea value={recipeText} onChange={e => setRecipeText(e.target.value)} />
+                            <textarea value={spec.rawText} onChange={getSetSpecTextAsHandler('rawText')} />
                         </Control>
+
+                        <div className={classes.submitContainer}>
+                            <input type="submit" />
+                            {mutation.isPending
+                                ? 'Saving...'
+                                : mutation.isSuccess
+                                  ? 'Saved!'
+                                  : mutation.isError
+                                    ? `Error! ${mutation.error}`
+                                    : null}
+                        </div>
                     </form>
                 </article>
             </div>

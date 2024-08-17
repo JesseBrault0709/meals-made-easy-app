@@ -55,7 +55,7 @@ const getRecipeInfos = async ({
                     owner,
                     isPublic,
                     starCount,
-                    mainImage: toImageView(rawMainImage),
+                    mainImage: rawMainImage !== null ? toImageView(rawMainImage) : null,
                     slug
                 })
             )
