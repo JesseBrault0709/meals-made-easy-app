@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useRouter } from '@tanstack/react-router'
+import { useLocation, useNavigate } from '@tanstack/react-router'
 import { useAuth } from '../../auth'
 import classes from './header.module.css'
 
@@ -7,20 +7,17 @@ export interface HeaderProps {
 }
 
 const Header = ({ username }: HeaderProps) => {
-    const auth = useAuth()
-    const router = useRouter()
+    const { putToken } = useAuth()
     const navigate = useNavigate()
     const location = useLocation()
 
-    const onLogin = async () => {
+    const onLogin = () => {
         navigate({ to: '/login', search: { redirect: location.href } })
     }
 
-    const onLogout = async () => {
-        auth.clearToken(async () => {
-            await router.invalidate()
-            await navigate({ to: '/login' })
-        })
+    const onLogout = () => {
+        putToken(null)
+        navigate({ to: '/login' })
     }
 
     return (

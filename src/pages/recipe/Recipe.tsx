@@ -51,14 +51,14 @@ interface RecipeStarButtonProps {
 }
 
 const RecipeStarButton = ({ username, slug, isStarred, starCount }: RecipeStarButtonProps) => {
-    const authContext = useAuth()
+    const { accessToken } = useAuth()
     const queryClient = useQueryClient()
 
     const addStarMutation = useMutation({
         mutationFn: () => {
-            if (authContext.token !== null) {
+            if (accessToken !== null) {
                 return addStar({
-                    token: authContext.token,
+                    accessToken,
                     slug,
                     username
                 })
@@ -73,9 +73,9 @@ const RecipeStarButton = ({ username, slug, isStarred, starCount }: RecipeStarBu
 
     const removeStarMutation = useMutation({
         mutationFn: () => {
-            if (authContext.token !== null) {
+            if (accessToken !== null) {
                 return removeStar({
-                    token: authContext.token,
+                    accessToken,
                     slug,
                     username
                 })
@@ -111,7 +111,7 @@ export interface RecipeProps {
 }
 
 const Recipe = ({ username, slug }: RecipeProps) => {
-    const authContext = useAuth()
+    const { accessToken } = useAuth()
     const queryClient = useQueryClient()
 
     const recipeQuery = useQuery(
@@ -120,7 +120,7 @@ const Recipe = ({ username, slug }: RecipeProps) => {
             queryFn: ({ signal: abortSignal }) =>
                 getRecipe({
                     abortSignal,
-                    authContext,
+                    accessToken,
                     username,
                     slug
                 })
@@ -138,7 +138,7 @@ const Recipe = ({ username, slug }: RecipeProps) => {
             ],
             queryFn: ({ signal }) =>
                 getImage({
-                    accessToken: authContext.token,
+                    accessToken,
                     signal,
                     url: recipeQuery.data!.recipe.mainImage!.url
                 })

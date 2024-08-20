@@ -1,3 +1,4 @@
+import AccessToken from '../types/AccessToken'
 import { ApiError } from './ApiError'
 import ExpiredTokenError from './ExpiredTokenError'
 import {
@@ -6,17 +7,23 @@ import {
     toGetRecipeViewWithRawText
 } from './types/GetRecipeView'
 import UpdateRecipeSpec from './types/UpdateRecipeSpec'
+import { addBearer } from './util'
 
 export interface UpdateRecipeDeps {
     spec: UpdateRecipeSpec
-    token: string
+    accessToken: AccessToken
     username: string
     slug: string
 }
 
-const updateRecipe = async ({ spec, token, username, slug }: UpdateRecipeDeps): Promise<GetRecipeViewWithRawText> => {
+const updateRecipe = async ({
+    spec,
+    accessToken,
+    username,
+    slug
+}: UpdateRecipeDeps): Promise<GetRecipeViewWithRawText> => {
     const headers = new Headers()
-    headers.set('Authorization', `Bearer ${token}`)
+    addBearer(headers, accessToken)
     headers.set('Content-type', 'application/json')
     const response = await fetch(import.meta.env.VITE_MME_API_URL + `/recipes/${username}/${slug}`, {
         headers,

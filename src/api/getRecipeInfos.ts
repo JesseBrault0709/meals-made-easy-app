@@ -1,24 +1,26 @@
+import AccessToken from '../types/AccessToken'
 import { ApiError } from './ApiError'
 import ExpiredTokenError from './ExpiredTokenError'
 import { toImageView } from './types/ImageView'
 import RecipeInfosView, { RawRecipeInfosView } from './types/RecipeInfosView'
+import { addBearer } from './util'
 
 export interface GetRecipeInfosDeps {
     abortSignal: AbortSignal
-    token: string | null
+    accessToken: AccessToken | null
     pageNumber: number
     pageSize: number
 }
 
 const getRecipeInfos = async ({
     abortSignal,
-    token,
+    accessToken,
     pageNumber,
     pageSize
 }: GetRecipeInfosDeps): Promise<RecipeInfosView> => {
     const headers = new Headers()
-    if (token !== null) {
-        headers.set('Authorization', `Bearer ${token}`)
+    if (accessToken !== null) {
+        addBearer(headers, accessToken)
     }
     const response = await fetch(import.meta.env.VITE_MME_API_URL + `/recipes?page=${pageNumber}&size=${pageSize}`, {
         signal: abortSignal,

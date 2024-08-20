@@ -86,7 +86,7 @@ export interface EditRecipeProps {
 }
 
 const EditRecipe = ({ username, slug }: EditRecipeProps) => {
-    const auth = useAuth()
+    const { accessToken } = useAuth()
     const navigate = useNavigate()
 
     // useEffect(() => {
@@ -105,7 +105,7 @@ const EditRecipe = ({ username, slug }: EditRecipeProps) => {
             queryKey: ['recipes', username, slug],
             queryFn: ({ signal }) =>
                 getRecipe({
-                    authContext: auth,
+                    accessToken,
                     username,
                     slug,
                     abortSignal: signal,
@@ -140,10 +140,10 @@ const EditRecipe = ({ username, slug }: EditRecipeProps) => {
     const mutation = useMutation(
         {
             mutationFn: () => {
-                if (auth.token !== null) {
+                if (accessToken !== null) {
                     return updateRecipe({
                         spec,
-                        token: auth.token,
+                        accessToken,
                         username,
                         slug
                     })

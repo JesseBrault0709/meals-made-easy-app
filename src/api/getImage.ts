@@ -1,8 +1,10 @@
+import AccessToken from '../types/AccessToken'
 import { ApiError } from './ApiError'
 import ExpiredTokenError from './ExpiredTokenError'
+import { addBearer } from './util'
 
 export interface GetImageDeps {
-    accessToken: string | null
+    accessToken: AccessToken | null
     signal: AbortSignal
     url: string
 }
@@ -10,7 +12,7 @@ export interface GetImageDeps {
 const getImage = async ({ accessToken, signal, url }: GetImageDeps): Promise<string> => {
     const headers = new Headers()
     if (accessToken !== null) {
-        headers.set('Authorization', `Bearer ${accessToken}`)
+        addBearer(headers, accessToken)
     }
     const response = await fetch(url, {
         headers,

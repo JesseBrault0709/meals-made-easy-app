@@ -1,15 +1,17 @@
+import AccessToken from '../types/AccessToken'
 import { ApiError } from './ApiError'
 import ExpiredTokenError from './ExpiredTokenError'
+import { addBearer } from './util'
 
 export interface AddStarDeps {
-    token: string
+    accessToken: AccessToken
     username: string
     slug: string
 }
 
-const addStar = async ({ slug, token, username }: AddStarDeps): Promise<void> => {
+const addStar = async ({ slug, accessToken, username }: AddStarDeps): Promise<void> => {
     const headers = new Headers()
-    headers.set('Authorization', `Bearer ${token}`)
+    addBearer(headers, accessToken)
     const response = await fetch(import.meta.env.VITE_MME_API_URL + `/recipes/${username}/${slug}/star`, {
         headers,
         method: 'POST',

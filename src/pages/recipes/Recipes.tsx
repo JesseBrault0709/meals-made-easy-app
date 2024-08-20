@@ -11,7 +11,7 @@ const Recipes = () => {
     const [pageNumber, setPageNumber] = useState(0)
     const [pageSize, setPageSize] = useState(20)
 
-    const { token } = useAuth()
+    const { accessToken } = useAuth()
 
     const queryClient = useQueryClient()
     const { data, isPending, error } = useQuery(
@@ -22,7 +22,7 @@ const Recipes = () => {
                     abortSignal: signal,
                     pageNumber,
                     pageSize,
-                    token
+                    accessToken
                 })
         },
         queryClient
@@ -42,7 +42,7 @@ const Recipes = () => {
                           queryFn: async ({ signal }: any) => {
                               // any needed in the params
                               const imgUrl = await getImage({
-                                  accessToken: token,
+                                  accessToken,
                                   signal,
                                   url: recipeInfoView.mainImage!.url
                               })

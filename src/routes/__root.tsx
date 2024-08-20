@@ -8,11 +8,11 @@ import classes from './__root.module.css'
 import MainNav from '../components/main-nav/MainNav'
 
 const RootLayout = () => {
-    const { username } = useAuth()
+    const { accessToken } = useAuth()
 
     return (
         <>
-            <Header username={username ?? undefined} />
+            <Header username={accessToken?.username} />
             <div className={classes.mainWrapper}>
                 <MainNav />
                 <main>

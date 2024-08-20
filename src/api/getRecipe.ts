@@ -1,4 +1,4 @@
-import { AuthContextType } from '../auth'
+import AccessToken from '../types/AccessToken'
 import { ApiError } from './ApiError'
 import ExpiredTokenError from './ExpiredTokenError'
 import GetRecipeView, {
@@ -8,9 +8,10 @@ import GetRecipeView, {
     toGetRecipeView,
     toGetRecipeViewWithRawText
 } from './types/GetRecipeView'
+import { addBearer } from './util'
 
 export interface GetRecipeCommonDeps {
-    authContext: AuthContextType
+    accessToken: AccessToken | null
     username: string
     slug: string
     abortSignal: AbortSignal
@@ -30,15 +31,15 @@ export interface GetRecipe {
 }
 
 const getRecipe = (async ({
-    authContext,
+    accessToken,
     username,
     slug,
     abortSignal,
     includeRawText
 }: GetRecipeDeps | GetRecipeDepsIncludeRawText): Promise<GetRecipeView | GetRecipeViewWithRawText> => {
     const headers = new Headers()
-    if (authContext.token !== null) {
-        headers.set('Authorization', `Bearer ${authContext.token}`)
+    if (accessToken !== null) {
+        addBearer(headers, accessToken)
     }
     const query = includeRawText ? '?includeRawText=true' : ''
     const response = await fetch(import.meta.env.VITE_MME_API_URL + `/recipes/${username}/${slug}${query}`, {

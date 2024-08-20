@@ -1,55 +1,54 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext, useReducer } from 'react'
+import AccessToken from './types/AccessToken'
 
 export interface AuthContextType {
-    token: string | null
-    username: string | null
-    putToken(token: string, username: string, cb?: () => void): void
-    clearToken(cb?: () => void): void
+    accessToken: AccessToken | null
+    putToken: (token: AccessToken | null) => void
 }
 
-interface AuthState {
-    token: string | null
-    username: string | null
-    putCb?: () => void
-    clearCb?: () => void
+interface AuthReducerState {
+    accessToken: AccessToken | null
+}
+
+const initialState: AuthReducerState = {
+    accessToken: null
+}
+
+type AuthReducerAction = PutTokenAction | ClearTokenAction
+
+interface PutTokenAction {
+    tag: 'putToken'
+    accessToken: AccessToken
+}
+
+interface ClearTokenAction {
+    tag: 'clearToken'
+}
+
+const authReducer = (_state: AuthReducerState, action: AuthReducerAction): AuthReducerState => {
+    switch (action.tag) {
+        case 'putToken':
+            return { accessToken: action.accessToken }
+        case 'clearToken':
+            return { accessToken: null }
+    }
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
 export const AuthProvider = ({ children }: React.PropsWithChildren) => {
-    const [authState, setAuthState] = useState<AuthState>({
-        token: null,
-        username: null
-    })
-
-    useEffect(() => {
-        if (authState.token === null && authState.clearCb !== undefined) {
-            authState.clearCb()
-            setAuthState({ ...authState, clearCb: undefined })
-        } else if (authState.token !== null && authState.putCb !== undefined) {
-            authState.putCb()
-            setAuthState({ ...authState, putCb: undefined })
-        }
-    }, [authState.token])
+    const [state, dispatch] = useReducer(authReducer, initialState)
 
     return (
         <AuthContext.Provider
             value={{
-                token: authState.token,
-                username: authState.username,
-                putToken(token, username, cb) {
-                    setAuthState({
-                        token,
-                        username,
-                        putCb: cb
-                    })
-                },
-                clearToken(cb) {
-                    setAuthState({
-                        token: null,
-                        username: null,
-                        clearCb: cb
-                    })
+                accessToken: state.accessToken,
+                putToken: token => {
+                    if (token === null) {
+                        dispatch({ tag: 'clearToken' })
+                    } else {
+                        dispatch({ tag: 'putToken', accessToken: token })
+                    }
                 }
             }}
         >
