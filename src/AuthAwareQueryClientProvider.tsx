@@ -1,6 +1,6 @@
 import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { useLocation, useNavigate } from '@tanstack/react-router'
+import { useRouter } from '@tanstack/react-router'
 import React, { useCallback, useMemo, useRef } from 'react'
 import { ApiError } from './api/ApiError'
 import ExpiredTokenError from './api/ExpiredTokenError'
@@ -9,8 +9,7 @@ import { useAuth } from './auth'
 
 const AuthAwareQueryClientProvider = ({ children }: React.PropsWithChildren) => {
     const { putToken } = useAuth()
-    const navigate = useNavigate()
-    const location = useLocation()
+    const router = useRouter()
     const refreshing = useRef(false)
 
     const doRefresh = useCallback(async () => {
@@ -26,11 +25,11 @@ const AuthAwareQueryClientProvider = ({ children }: React.PropsWithChildren) => 
                 })
             } catch (error) {
                 if (error instanceof RefreshTokenError) {
-                    navigate({
+                    router.navigate({
                         to: '/login',
                         search: {
                             reason: error.reason,
-                            redirect: location.href
+                            redirect: router.state.location.href
                         }
                     })
                 } else if (error instanceof ApiError) {
@@ -39,7 +38,7 @@ const AuthAwareQueryClientProvider = ({ children }: React.PropsWithChildren) => 
             }
             refreshing.current = false
         }
-    }, [putToken, navigate, location])
+    }, [putToken, router])
 
     const queryClient = useMemo(
         () =>
