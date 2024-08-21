@@ -1,7 +1,7 @@
 import { Outlet, createRootRouteWithContext } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 import RouterContext from '../RouterContext'
-import { useAuth } from '../auth'
+import { useAuth } from '../AuthProvider'
 import Footer from '../components/footer/Footer'
 import Header from '../components/header/Header'
 import classes from './__root.module.css'

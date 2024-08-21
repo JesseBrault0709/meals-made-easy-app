@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from '@tanstack/react-router'
-import { useAuth } from '../../auth'
+import { useAuth } from '../../AuthProvider'
 import classes from './header.module.css'
 
 export interface HeaderProps {

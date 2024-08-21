@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer } from 'react'
+import { createContext, PropsWithChildren, useContext, useReducer } from 'react'
 import AccessToken from './types/AccessToken'
 
 export interface AuthContextType {
@@ -36,7 +36,7 @@ const authReducer = (_state: AuthReducerState, action: AuthReducerAction): AuthR
 
 const AuthContext = createContext<AuthContextType | null>(null)
 
-export const AuthProvider = ({ children }: React.PropsWithChildren) => {
+export const AuthProvider = ({ children }: PropsWithChildren) => {
     const [state, dispatch] = useReducer(authReducer, initialState)
 
     return (

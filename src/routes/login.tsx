@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router'
 import { FormEvent, useState } from 'react'
 import { z } from 'zod'
 import login from '../api/login'
-import { useAuth } from '../auth'
+import { useAuth } from '../AuthProvider'
 
 const Login = () => {
     const { putToken } = useAuth()

@@ -3,15 +3,17 @@ import { useState } from 'react'
 import { ApiError } from '../../api/ApiError'
 import getImage from '../../api/getImage'
 import getRecipeInfos from '../../api/getRecipeInfos'
-import { useAuth } from '../../auth'
+import { useAuth } from '../../AuthProvider'
 import RecipeCard from '../../components/recipe-card/RecipeCard'
 import classes from './recipes.module.css'
+import { useRefresh } from '../../RefreshProvider'
 
 const Recipes = () => {
     const [pageNumber, setPageNumber] = useState(0)
     const [pageSize, setPageSize] = useState(20)
 
     const { accessToken } = useAuth()
+    const refresh = useRefresh()
 
     const queryClient = useQueryClient()
     const { data, isPending, error } = useQuery(
@@ -19,10 +21,11 @@ const Recipes = () => {
             queryKey: ['recipeInfos'],
             queryFn: ({ signal }) =>
                 getRecipeInfos({
-                    abortSignal: signal,
+                    accessToken,
                     pageNumber,
                     pageSize,
-                    accessToken
+                    refresh,
+                    signal
                 })
         },
         queryClient

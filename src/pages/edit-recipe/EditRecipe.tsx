@@ -5,7 +5,7 @@ import { ApiError } from '../../api/ApiError'
 import getRecipe from '../../api/getRecipe'
 import UpdateRecipeSpec, { fromFullRecipeView } from '../../api/types/UpdateRecipeSpec'
 import updateRecipe from '../../api/updateRecipe'
-import { useAuth } from '../../auth'
+import { useAuth } from '../../AuthProvider'
 import classes from './edit-recipe.module.css'
 
 interface ControlProps {
