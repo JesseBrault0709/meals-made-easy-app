@@ -1,5 +1,5 @@
 import { useRouter } from '@tanstack/react-router'
-import { createContext, useContext, PropsWithChildren, useRef, useCallback } from 'react'
+import { createContext, PropsWithChildren, useCallback, useContext, useRef } from 'react'
 import { ApiError } from './api/ApiError'
 import refresh, { RefreshTokenError } from './api/refresh'
 import { useAuth } from './AuthProvider'
@@ -25,7 +25,6 @@ const RefreshProvider = ({ children }: PropsWithChildren) => {
     const refreshing = useRef(false)
 
     const doRefresh: Refresh = useCallback(async () => {
-        putToken(null)
         if (!refreshing.current) {
             refreshing.current = true
             try {
@@ -53,11 +52,12 @@ const RefreshProvider = ({ children }: PropsWithChildren) => {
                 } else if (error instanceof ApiError) {
                     console.error(error)
                 }
+                putToken(null)
                 refreshing.current = false
             }
         }
         return null
-    }, [putToken, router])
+    }, [putToken])
 
     return (
         <RefreshContext.Provider

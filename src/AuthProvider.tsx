@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren, useContext, useReducer } from 'react'
+import { createContext, PropsWithChildren, useContext, useState } from 'react'
 import AccessToken from './types/AccessToken'
 
 export interface AuthContextType {
@@ -6,49 +6,17 @@ export interface AuthContextType {
     putToken: (token: AccessToken | null) => void
 }
 
-interface AuthReducerState {
-    accessToken: AccessToken | null
-}
-
-const initialState: AuthReducerState = {
-    accessToken: null
-}
-
-type AuthReducerAction = PutTokenAction | ClearTokenAction
-
-interface PutTokenAction {
-    tag: 'putToken'
-    accessToken: AccessToken
-}
-
-interface ClearTokenAction {
-    tag: 'clearToken'
-}
-
-const authReducer = (_state: AuthReducerState, action: AuthReducerAction): AuthReducerState => {
-    switch (action.tag) {
-        case 'putToken':
-            return { accessToken: action.accessToken }
-        case 'clearToken':
-            return { accessToken: null }
-    }
-}
-
 const AuthContext = createContext<AuthContextType | null>(null)
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
-    const [state, dispatch] = useReducer(authReducer, initialState)
-
+    const [accessToken, setAccessToken] = useState<AccessToken | null>(null)
     return (
         <AuthContext.Provider
             value={{
-                accessToken: state.accessToken,
+                accessToken,
                 putToken: token => {
-                    if (token === null) {
-                        dispatch({ tag: 'clearToken' })
-                    } else {
-                        dispatch({ tag: 'putToken', accessToken: token })
-                    }
+                    console.log(`token: ${token !== null ? token.token : null}`)
+                    setAccessToken(token)
                 }
             }}
         >
