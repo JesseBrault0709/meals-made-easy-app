@@ -1,13 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
 import { ChangeEventHandler, FormEventHandler, PropsWithChildren, useEffect, useState } from 'react'
 import { ApiError } from '../../api/ApiError'
 import getRecipe from '../../api/getRecipe'
 import UpdateRecipeSpec, { fromFullRecipeView } from '../../api/types/UpdateRecipeSpec'
 import updateRecipe from '../../api/updateRecipe'
 import { useAuth } from '../../AuthProvider'
-import classes from './edit-recipe.module.css'
 import { useRefresh } from '../../RefreshProvider'
+import classes from './edit-recipe.module.css'
 
 interface ControlProps {
     id: string
@@ -88,19 +87,17 @@ export interface EditRecipeProps {
 
 const EditRecipe = ({ username, slug }: EditRecipeProps) => {
     const { accessToken } = useAuth()
-    const navigate = useNavigate()
     const refresh = useRefresh()
-
-    // useEffect(() => {
-    //     if (auth.token === null) {
-    //         navigate({
-    //             to: '/login',
-    //             search: { reason: 'NOT_LOGGED_IN', redirect: `/recipes/${username}/${slug}/edit` }
-    //         })
-    //     }
-    // }, [auth.token, navigate, username, slug])
-
     const queryClient = useQueryClient()
+    const [spec, setSpec] = useState<UpdateRecipeSpec>({
+        title: '',
+        preparationTime: null,
+        cookingTime: null,
+        totalTime: null,
+        rawText: '',
+        mainImage: null,
+        isPublic: false
+    })
 
     const recipeQuery = useQuery(
         {
@@ -118,25 +115,9 @@ const EditRecipe = ({ username, slug }: EditRecipeProps) => {
         queryClient
     )
 
-    const [isOwner, setIsOwner] = useState(false)
-
-    const [spec, setSpec] = useState<UpdateRecipeSpec>({
-        title: '',
-        preparationTime: null,
-        cookingTime: null,
-        totalTime: null,
-        rawText: '',
-        mainImage: null,
-        isPublic: false
-    })
-
     useEffect(() => {
         if (recipeQuery.isSuccess) {
-            const { isOwner, recipe } = recipeQuery.data
-            setIsOwner(isOwner ?? false)
-            if (isOwner) {
-                setSpec(fromFullRecipeView(recipe))
-            }
+            setSpec(fromFullRecipeView(recipeQuery.data.recipe))
         }
     }, [recipeQuery.isSuccess, recipeQuery.data])
 
@@ -156,11 +137,9 @@ const EditRecipe = ({ username, slug }: EditRecipeProps) => {
                 }
             },
             onSuccess: data => {
-                setIsOwner(data.isOwner ?? false)
+                console.log(data)
                 setSpec(fromFullRecipeView(data.recipe))
-                queryClient.invalidateQueries({
-                    queryKey: ['recipes', username, slug]
-                })
+                queryClient.setQueryData(['recipes', username, slug], data)
             }
         },
         queryClient
@@ -196,9 +175,11 @@ const EditRecipe = ({ username, slug }: EditRecipeProps) => {
             setSpec(next)
         }
 
-    if (recipeQuery.isLoading) {
+    if (recipeQuery.isPending) {
+        console.log('we are pending')
         return 'Loading...'
     } else if (recipeQuery.isError) {
+        console.log('we had an error')
         const { error } = recipeQuery
         if (error instanceof ApiError) {
             if (error.status === 404) {
@@ -209,9 +190,11 @@ const EditRecipe = ({ username, slug }: EditRecipeProps) => {
         } else {
             return `Error: ${error.name} ${error.message}`
         }
-    } else if (!isOwner) {
+    } else if (recipeQuery.isSuccess && !recipeQuery.data.isOwner) {
+        console.log('we are not the owner')
         return 'You do not have permission to edit this recipe.'
     } else {
+        console.log('doing whole page')
         return (
             <div className={classes.articleContainer}>
                 <article>
@@ -242,7 +225,11 @@ const EditRecipe = ({ username, slug }: EditRecipeProps) => {
                         </Control>
 
                         <Control id="recipe-text" displayName="Recipe Text">
-                            <textarea value={spec.rawText} onChange={getSetSpecTextAsHandler('rawText')} />
+                            <textarea
+                                id="recipe-text"
+                                value={spec.rawText}
+                                onChange={getSetSpecTextAsHandler('rawText')}
+                            />
                         </Control>
 
                         <div className={classes.submitContainer}>
