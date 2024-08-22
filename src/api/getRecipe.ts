@@ -1,20 +1,18 @@
 import AccessToken from '../types/AccessToken'
-import { ApiError } from './ApiError'
-import ExpiredTokenError from './ExpiredTokenError'
+import Refresh from '../types/Refresh'
+import apiCallFactory from './apiCallFactory'
 import GetRecipeView, {
     GetRecipeViewWithRawText,
-    RawGetRecipeView,
-    RawGetRecipeViewWithRawText,
     toGetRecipeView,
     toGetRecipeViewWithRawText
 } from './types/GetRecipeView'
-import { addBearer } from './util'
 
 export interface GetRecipeCommonDeps {
     accessToken: AccessToken | null
-    username: string
+    refresh: Refresh
     slug: string
-    abortSignal: AbortSignal
+    signal: AbortSignal
+    username: string
 }
 
 export interface GetRecipeDeps extends GetRecipeCommonDeps {
@@ -30,33 +28,33 @@ export interface GetRecipe {
     (deps: GetRecipeDepsIncludeRawText): Promise<GetRecipeViewWithRawText>
 }
 
+const doGetRecipe = apiCallFactory('GET', toGetRecipeView)
+const doGetRecipeIncludeRawText = apiCallFactory('GET', toGetRecipeViewWithRawText)
+
 const getRecipe = (async ({
     accessToken,
-    username,
+    includeRawText,
+    refresh,
     slug,
-    abortSignal,
-    includeRawText
+    signal,
+    username
 }: GetRecipeDeps | GetRecipeDepsIncludeRawText): Promise<GetRecipeView | GetRecipeViewWithRawText> => {
-    const headers = new Headers()
-    if (accessToken !== null) {
-        addBearer(headers, accessToken)
-    }
-    const query = includeRawText ? '?includeRawText=true' : ''
-    const response = await fetch(import.meta.env.VITE_MME_API_URL + `/recipes/${username}/${slug}${query}`, {
-        signal: abortSignal,
-        headers,
-        mode: 'cors'
-    })
-    if (response.ok) {
-        if (includeRawText) {
-            return toGetRecipeViewWithRawText((await response.json()) as RawGetRecipeViewWithRawText)
-        } else {
-            return toGetRecipeView((await response.json()) as RawGetRecipeView)
-        }
-    } else if (response.status === 401) {
-        throw new ExpiredTokenError()
+    const endpoint = `/recipes/${username}/${slug}`
+    if (includeRawText) {
+        return doGetRecipeIncludeRawText({
+            accessToken,
+            endpoint,
+            query: 'includeRawText=true',
+            refresh,
+            signal
+        })
     } else {
-        throw new ApiError(response.status, response.statusText)
+        return doGetRecipe({
+            accessToken,
+            endpoint,
+            refresh,
+            signal
+        })
     }
 }) as GetRecipe
 

@@ -1,6 +1,6 @@
 import AccessToken from '../types/AccessToken'
 import Refresh from '../types/Refresh'
-import { getCallFactory } from './apiCallFactory'
+import apiCallFactory from './apiCallFactory'
 import { toRecipeInfosView } from './types/RecipeInfosView'
 
 export interface GetRecipeInfosDeps {
@@ -11,7 +11,7 @@ export interface GetRecipeInfosDeps {
     signal: AbortSignal
 }
 
-const doGetRecipeInfos = getCallFactory(toRecipeInfosView)
+const doGetRecipeInfos = apiCallFactory('GET', toRecipeInfosView)
 
 const getRecipeInfos = ({ accessToken, pageNumber, pageSize, refresh, signal }: GetRecipeInfosDeps) =>
     doGetRecipeInfos({

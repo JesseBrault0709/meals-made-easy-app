@@ -7,6 +7,7 @@ import UpdateRecipeSpec, { fromFullRecipeView } from '../../api/types/UpdateReci
 import updateRecipe from '../../api/updateRecipe'
 import { useAuth } from '../../AuthProvider'
 import classes from './edit-recipe.module.css'
+import { useRefresh } from '../../RefreshProvider'
 
 interface ControlProps {
     id: string
@@ -88,6 +89,7 @@ export interface EditRecipeProps {
 const EditRecipe = ({ username, slug }: EditRecipeProps) => {
     const { accessToken } = useAuth()
     const navigate = useNavigate()
+    const refresh = useRefresh()
 
     // useEffect(() => {
     //     if (auth.token === null) {
@@ -106,10 +108,11 @@ const EditRecipe = ({ username, slug }: EditRecipeProps) => {
             queryFn: ({ signal }) =>
                 getRecipe({
                     accessToken,
-                    username,
+                    includeRawText: true,
+                    refresh,
                     slug,
-                    abortSignal: signal,
-                    includeRawText: true
+                    signal,
+                    username
                 })
         },
         queryClient
@@ -144,6 +147,7 @@ const EditRecipe = ({ username, slug }: EditRecipeProps) => {
                     return updateRecipe({
                         spec,
                         accessToken,
+                        refresh,
                         username,
                         slug
                     })

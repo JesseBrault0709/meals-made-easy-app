@@ -46,6 +46,7 @@ const Recipes = () => {
                               // any needed in the params
                               const imgUrl = await getImage({
                                   accessToken,
+                                  refresh,
                                   signal,
                                   url: recipeInfoView.mainImage!.url
                               })

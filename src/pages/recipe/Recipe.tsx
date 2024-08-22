@@ -1,5 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { QueryObserverSuccessResult, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
 import addStar from '../../api/addStar'
 import { ApiError } from '../../api/ApiError'
 import getImage from '../../api/getImage'
@@ -9,8 +10,8 @@ import GetRecipeView from '../../api/types/GetRecipeView'
 import { useAuth } from '../../AuthProvider'
 import RecipeVisibilityIcon from '../../components/recipe-visibility-icon/RecipeVisibilityIcon'
 import UserIconAndName from '../../components/user-icon-and-name/UserIconAndName'
+import { useRefresh } from '../../RefreshProvider'
 import classes from './recipe.module.css'
-import { useNavigate } from '@tanstack/react-router'
 
 interface EditButtonProps {
     username: string
@@ -53,14 +54,16 @@ interface RecipeStarButtonProps {
 const RecipeStarButton = ({ username, slug, isStarred, starCount }: RecipeStarButtonProps) => {
     const { accessToken } = useAuth()
     const queryClient = useQueryClient()
+    const refresh = useRefresh()
 
     const addStarMutation = useMutation({
         mutationFn: () => {
             if (accessToken !== null) {
                 return addStar({
                     accessToken,
-                    slug,
-                    username
+                    refresh,
+                    username,
+                    slug
                 })
             } else {
                 return Promise.resolve()
@@ -76,6 +79,7 @@ const RecipeStarButton = ({ username, slug, isStarred, starCount }: RecipeStarBu
             if (accessToken !== null) {
                 return removeStar({
                     accessToken,
+                    refresh,
                     slug,
                     username
                 })
@@ -113,16 +117,18 @@ export interface RecipeProps {
 const Recipe = ({ username, slug }: RecipeProps) => {
     const { accessToken } = useAuth()
     const queryClient = useQueryClient()
+    const refresh = useRefresh()
 
     const recipeQuery = useQuery(
         {
             queryKey: ['recipes', username, slug],
-            queryFn: ({ signal: abortSignal }) =>
+            queryFn: ({ signal }) =>
                 getRecipe({
-                    abortSignal,
                     accessToken,
-                    username,
-                    slug
+                    refresh,
+                    signal,
+                    slug,
+                    username
                 })
         },
         queryClient
@@ -140,6 +146,7 @@ const Recipe = ({ username, slug }: RecipeProps) => {
                 getImage({
                     accessToken,
                     signal,
+                    refresh,
                     url: recipeQuery.data!.recipe.mainImage!.url
                 })
         },

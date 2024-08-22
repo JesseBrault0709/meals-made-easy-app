@@ -1,43 +1,31 @@
 import AccessToken from '../types/AccessToken'
-import { ApiError } from './ApiError'
-import ExpiredTokenError from './ExpiredTokenError'
-import {
-    GetRecipeViewWithRawText,
-    RawGetRecipeViewWithRawText,
-    toGetRecipeViewWithRawText
-} from './types/GetRecipeView'
+import Refresh from '../types/Refresh'
+import apiCallFactory from './apiCallFactory'
+import { GetRecipeViewWithRawText, toGetRecipeViewWithRawText } from './types/GetRecipeView'
 import UpdateRecipeSpec from './types/UpdateRecipeSpec'
-import { addBearer } from './util'
 
 export interface UpdateRecipeDeps {
     spec: UpdateRecipeSpec
     accessToken: AccessToken
+    refresh: Refresh
     username: string
     slug: string
 }
 
-const updateRecipe = async ({
+const doUpdateRecipe = apiCallFactory('POST', toGetRecipeViewWithRawText)
+
+const updateRecipe = ({
     spec,
     accessToken,
+    refresh,
     username,
     slug
-}: UpdateRecipeDeps): Promise<GetRecipeViewWithRawText> => {
-    const headers = new Headers()
-    addBearer(headers, accessToken)
-    headers.set('Content-type', 'application/json')
-    const response = await fetch(import.meta.env.VITE_MME_API_URL + `/recipes/${username}/${slug}`, {
-        headers,
-        method: 'POST',
-        mode: 'cors',
-        body: JSON.stringify(spec)
+}: UpdateRecipeDeps): Promise<GetRecipeViewWithRawText> =>
+    doUpdateRecipe({
+        accessToken,
+        body: spec,
+        endpoint: `/recipes/${username}/${slug}`,
+        refresh
     })
-    if (response.ok) {
-        return toGetRecipeViewWithRawText((await response.json()) as RawGetRecipeViewWithRawText)
-    } else if (response.status === 401) {
-        throw new ExpiredTokenError()
-    } else {
-        throw new ApiError(response.status, response.statusText)
-    }
-}
 
 export default updateRecipe

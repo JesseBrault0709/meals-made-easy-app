@@ -1,27 +1,21 @@
 import AccessToken from '../types/AccessToken'
-import { ApiError } from './ApiError'
-import ExpiredTokenError from './ExpiredTokenError'
-import { addBearer } from './util'
+import Refresh from '../types/Refresh'
+import apiCallFactory from './apiCallFactory'
 
 export interface RemoveStarDeps {
     accessToken: AccessToken
+    refresh: Refresh
     username: string
     slug: string
 }
 
-const removeStar = async ({ accessToken, username, slug }: RemoveStarDeps) => {
-    const headers = new Headers()
-    addBearer(headers, accessToken)
-    const response = await fetch(import.meta.env.VITE_MME_API_URL + `/recipes/${username}/${slug}/star`, {
-        headers,
-        method: 'DELETE',
-        mode: 'cors'
+const doRemoveStar = apiCallFactory<void>('DELETE')
+
+const removeStar = ({ accessToken, refresh, username, slug }: RemoveStarDeps) =>
+    doRemoveStar({
+        accessToken,
+        endpoint: `/recipes/${username}/${slug}/star`,
+        refresh
     })
-    if (response.status === 401) {
-        throw new ExpiredTokenError()
-    } else if (!response.ok) {
-        throw new ApiError(response.status, response.statusText)
-    }
-}
 
 export default removeStar
